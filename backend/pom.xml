@@ -50,7 +50,7 @@
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
                 <version>${byte-buddy.version}</version>
-                <scope>test</scope>
+                <scope>runtime</scope>
             </dependency>
             <dependency> <!-- enables mocking of classes without default constructor (together with ByteBuddy or CGLIB) -->
                 <groupId>org.objenesis</groupId>
