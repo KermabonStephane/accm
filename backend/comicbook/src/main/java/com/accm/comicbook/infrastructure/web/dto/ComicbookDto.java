@@ -28,9 +28,15 @@ public record ComicbookDto(
             String middlename,
             @NotNull AuthorRole role
     ) {
-        static AuthorDto from(ComicbookAuthor author) {
+        public static AuthorDto from(ComicbookAuthor author) {
             return new AuthorDto(author.getId(), author.getFirstname(), author.getLastname(), author.getMiddlename(), author.getRole());
         }
+    }
+
+    public record ComicbookAuthorRequest(
+            @NotNull UUID authorId,
+            @NotNull AuthorRole role
+    ) {
     }
 
     public static ComicbookDto from(Comicbook comicbook) {

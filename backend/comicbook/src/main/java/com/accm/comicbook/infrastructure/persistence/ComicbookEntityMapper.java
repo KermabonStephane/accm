@@ -1,5 +1,6 @@
 package com.accm.comicbook.infrastructure.persistence;
 
+import com.accm.comicbook.domain.model.Author;
 import com.accm.comicbook.domain.model.Comicbook;
 import com.accm.comicbook.domain.model.ComicbookAuthor;
 
@@ -49,6 +50,10 @@ class ComicbookEntityMapper {
         entity.setAuthor(authorEntity);
         entity.setRole(author.getRole());
         return entity;
+    }
+
+    static Author toAuthorModel(AuthorJpaEntity entity) {
+        return new Author(entity.getId(), entity.getFirstname(), entity.getLastname(), entity.getMiddlename());
     }
 
     private static ComicbookAuthor toAuthorDomain(ComicbookAuthorJpaEntity entity) {

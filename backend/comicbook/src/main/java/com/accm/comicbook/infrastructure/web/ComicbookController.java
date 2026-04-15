@@ -5,6 +5,8 @@ import com.accm.comicbook.domain.model.ComicbookAuthor;
 import com.accm.comicbook.domain.model.ComicbookStatus;
 import com.accm.comicbook.domain.port.in.*;
 import com.accm.comicbook.infrastructure.web.dto.ComicbookDto;
+import com.accm.comicbook.infrastructure.web.dto.ComicbookDto.AuthorDto;
+import com.accm.comicbook.infrastructure.web.dto.ComicbookDto.ComicbookAuthorRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,6 +29,9 @@ class ComicbookController {
     private final ListComicbooksUseCase listComicbooksUseCase;
     private final UpdateComicbookUseCase updateComicbookUseCase;
     private final DeleteComicbookUseCase deleteComicbookUseCase;
+    private final ListComicbookAuthorsUseCase listComicbookAuthorsUseCase;
+    private final AddComicbookAuthorUseCase addComicbookAuthorUseCase;
+    private final RemoveComicbookAuthorUseCase removeComicbookAuthorUseCase;
 
     @GetMapping
     @Operation(summary = "List all comicbooks")
@@ -75,6 +80,33 @@ class ComicbookController {
     @Operation(summary = "Soft-delete a comicbook (marks status as DELETED)")
     void deleteComicbook(@PathVariable UUID id) {
         deleteComicbookUseCase.deleteComicbook(id);
+    }
+
+    @GetMapping("/{comicbookId}/authors")
+    @Operation(summary = "List authors of a comicbook")
+    ResponseEntity<List<AuthorDto>> listAuthors(@PathVariable UUID comicbookId) {
+        return ResponseEntity.ok(
+                listComicbookAuthorsUseCase.listAuthors(comicbookId).stream()
+                        .map(AuthorDto::from)
+                        .toList()
+        );
+    }
+
+    @PostMapping("/{comicbookId}/authors")
+    @Operation(summary = "Add an author to a comicbook")
+    ResponseEntity<AuthorDto> addAuthor(@PathVariable UUID comicbookId,
+                                        @RequestBody @Valid ComicbookAuthorRequest request) {
+        ComicbookAuthor author = addComicbookAuthorUseCase.addAuthor(comicbookId, request.authorId(), request.role());
+        return ResponseEntity.status(HttpStatus.CREATED).body(AuthorDto.from(author));
+    }
+
+    @DeleteMapping("/{comicbookId}/authors/{authorId}/roles/{role}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Remove an author role from a comicbook")
+    void removeAuthor(@PathVariable UUID comicbookId,
+                      @PathVariable UUID authorId,
+                      @PathVariable com.accm.comicbook.domain.model.AuthorRole role) {
+        removeComicbookAuthorUseCase.removeAuthor(comicbookId, authorId, role);
     }
 
     private static List<ComicbookAuthor> toAuthorDomain(ComicbookDto request) {
