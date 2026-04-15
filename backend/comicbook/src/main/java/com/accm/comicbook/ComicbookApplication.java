@@ -1,12 +1,12 @@
-package com.accm;
+package com.accm.comicbook;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AccmApplication {
+public class ComicbookApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AccmApplication.class, args);
+        SpringApplication.run(ComicbookApplication.class, args);
     }
 }
