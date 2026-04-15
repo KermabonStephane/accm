@@ -98,13 +98,13 @@ echo "$BODY" | pretty
 section "4 · PUT $API/$PERSON_ID — update person"
 do_curl -X PUT "$API/$PERSON_ID" \
   -H "Content-Type: application/json" \
-  -d '{
-    "firstname": "Jane",
-    "lastname":  "Smith",
-    "nickname":  "jsmith",
-    "email":     "jane.smith@example.com",
-    "role":      "ADMIN"
-  }'
+  -d "{
+    \"firstname\": \"Jane\",
+    \"lastname\":  \"Smith\",
+    \"nickname\":  \"jsmith_${UNIQUE_SUFFIX}\",
+    \"email\":     \"jane.smith.${UNIQUE_SUFFIX}@example.com\",
+    \"role\":      \"ADMIN\"
+  }"
 assert_status 200 "Update person"
 echo "$BODY" | pretty
 UPDATED_LASTNAME=$(json_field lastname)
