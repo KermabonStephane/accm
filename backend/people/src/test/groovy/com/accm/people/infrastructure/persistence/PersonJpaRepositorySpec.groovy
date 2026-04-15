@@ -3,10 +3,12 @@ package com.accm.people.infrastructure.persistence
 import com.accm.people.domain.model.PersonRole
 import com.accm.people.domain.model.PersonStatus
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.hibernate.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
 class PersonJpaRepositorySpec extends Specification {
 
     @Autowired
@@ -27,7 +29,7 @@ class PersonJpaRepositorySpec extends Specification {
 
         when: "the person is soft deleted by updating status to DELETED"
         entity.status = PersonStatus.DELETED
-        repository.save(entity)
+        repository.saveAndFlush(entity)
 
         then: "the person still exists in the database"
         repository.findById(entity.id).present
@@ -50,7 +52,7 @@ class PersonJpaRepositorySpec extends Specification {
 
         when: "only the first person is soft deleted"
         first.status = PersonStatus.DELETED
-        repository.save(first)
+        repository.saveAndFlush(first)
 
         then: "the second person still has status CREATED"
         repository.findById(second.id).get().status == PersonStatus.CREATED
