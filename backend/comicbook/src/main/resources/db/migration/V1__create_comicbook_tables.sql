@@ -9,10 +9,17 @@ CREATE TABLE comicbook
     updated_at TIMESTAMP    NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE author
+(
+    id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE comicbook_author
 (
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    comicbook_id UUID         NOT NULL REFERENCES comicbook (id) ON DELETE CASCADE,
-    name         VARCHAR(255) NOT NULL,
-    role         VARCHAR(20)  NOT NULL
+    comicbook_id UUID        NOT NULL REFERENCES comicbook (id) ON DELETE CASCADE,
+    author_id    UUID        NOT NULL REFERENCES author (id) ON DELETE CASCADE,
+    role         VARCHAR(20) NOT NULL,
+    UNIQUE (comicbook_id, author_id, role)
 );

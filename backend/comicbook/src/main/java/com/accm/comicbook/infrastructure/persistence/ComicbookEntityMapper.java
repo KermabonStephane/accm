@@ -4,6 +4,7 @@ import com.accm.comicbook.domain.model.Comicbook;
 import com.accm.comicbook.domain.model.ComicbookAuthor;
 
 import java.util.List;
+import java.util.UUID;
 
 class ComicbookEntityMapper {
 
@@ -37,17 +38,21 @@ class ComicbookEntityMapper {
     }
 
     private static ComicbookAuthorJpaEntity toAuthorEntity(ComicbookAuthor author) {
+        AuthorJpaEntity authorEntity = new AuthorJpaEntity();
+        authorEntity.setId(author.getId());
+        authorEntity.setName(author.getName());
+
         ComicbookAuthorJpaEntity entity = new ComicbookAuthorJpaEntity();
-        entity.setId(author.getId());
-        entity.setName(author.getName());
+        entity.setId(UUID.randomUUID());
+        entity.setAuthor(authorEntity);
         entity.setRole(author.getRole());
         return entity;
     }
 
     private static ComicbookAuthor toAuthorDomain(ComicbookAuthorJpaEntity entity) {
         return ComicbookAuthor.builder()
-                .id(entity.getId())
-                .name(entity.getName())
+                .id(entity.getAuthor().getId())
+                .name(entity.getAuthor().getName())
                 .role(entity.getRole())
                 .build();
     }

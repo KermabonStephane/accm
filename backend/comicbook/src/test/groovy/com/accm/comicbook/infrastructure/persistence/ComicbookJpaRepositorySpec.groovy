@@ -53,9 +53,13 @@ class ComicbookJpaRepositorySpec extends Specification {
 
     def "authors are persisted with the comicbook"() {
         given: "a comicbook with authors"
+        def authorEntity = new AuthorJpaEntity()
+        authorEntity.id = UUID.randomUUID()
+        authorEntity.name = "Alan Moore"
+
         def author = new ComicbookAuthorJpaEntity()
         author.id = UUID.randomUUID()
-        author.name = "Alan Moore"
+        author.author = authorEntity
         author.role = AuthorRole.WRITER
 
         def entity = new ComicbookJpaEntity()
@@ -70,7 +74,7 @@ class ComicbookJpaRepositorySpec extends Specification {
 
         then:
         found.authors.size() == 1
-        found.authors[0].name == "Alan Moore"
+        found.authors[0].author.name == "Alan Moore"
         found.authors[0].role == AuthorRole.WRITER
     }
 }

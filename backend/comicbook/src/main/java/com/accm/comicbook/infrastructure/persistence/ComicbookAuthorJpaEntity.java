@@ -18,7 +18,9 @@ class ComicbookAuthorJpaEntity {
     @Id
     private UUID id;
 
-    private String name;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "author_id")
+    private AuthorJpaEntity author;
 
     @Enumerated(EnumType.STRING)
     private AuthorRole role;

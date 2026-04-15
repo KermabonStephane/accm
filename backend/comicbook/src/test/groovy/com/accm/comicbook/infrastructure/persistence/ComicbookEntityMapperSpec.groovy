@@ -52,8 +52,8 @@ class ComicbookEntityMapperSpec extends Specification {
 
         then:
         entity.authors.size() == 1
-        entity.authors[0].id == author.id
-        entity.authors[0].name == "Alan Moore"
+        entity.authors[0].author.id == author.id
+        entity.authors[0].author.name == "Alan Moore"
         entity.authors[0].role == AuthorRole.WRITER
     }
 
