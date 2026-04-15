@@ -11,8 +11,10 @@ CREATE TABLE comicbook
 
 CREATE TABLE author
 (
-    id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    firstname  VARCHAR(100) NOT NULL,
+    lastname   VARCHAR(100) NOT NULL,
+    middlename VARCHAR(100)
 );
 
 CREATE TABLE comicbook_author

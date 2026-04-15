@@ -11,6 +11,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ComicbookAuthor {
     private final UUID id;
-    private final String name;
+    private final String firstname;
+    private final String lastname;
+    private final String middlename;
     private final AuthorRole role;
 }

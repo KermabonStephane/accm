@@ -84,7 +84,9 @@ class ComicbookController {
         return request.authors().stream()
                 .map(a -> ComicbookAuthor.builder()
                         .id(UUID.randomUUID())
-                        .name(a.name())
+                        .firstname(a.firstname())
+                        .lastname(a.lastname())
+                        .middlename(a.middlename())
                         .role(a.role())
                         .build())
                 .toList();

@@ -19,5 +19,9 @@ class AuthorJpaEntity {
     @Id
     private UUID id;
 
-    private String name;
+    private String firstname;
+
+    private String lastname;
+
+    private String middlename;
 }

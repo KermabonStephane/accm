@@ -37,7 +37,8 @@ class ComicbookEntityMapperSpec extends Specification {
         given:
         def author = ComicbookAuthor.builder()
                 .id(UUID.randomUUID())
-                .name("Alan Moore")
+                .firstname("Alan")
+                .lastname("Moore")
                 .role(AuthorRole.WRITER)
                 .build()
         def comicbook = Comicbook.builder()
@@ -53,7 +54,8 @@ class ComicbookEntityMapperSpec extends Specification {
         then:
         entity.authors.size() == 1
         entity.authors[0].author.id == author.id
-        entity.authors[0].author.name == "Alan Moore"
+        entity.authors[0].author.firstname == "Alan"
+        entity.authors[0].author.lastname == "Moore"
         entity.authors[0].role == AuthorRole.WRITER
     }
 
@@ -83,7 +85,8 @@ class ComicbookEntityMapperSpec extends Specification {
         given:
         def author = ComicbookAuthor.builder()
                 .id(UUID.randomUUID())
-                .name("Dave Gibbons")
+                .firstname("Dave")
+                .lastname("Gibbons")
                 .role(AuthorRole.ARTIST)
                 .build()
         def original = Comicbook.builder()
@@ -105,7 +108,8 @@ class ComicbookEntityMapperSpec extends Specification {
         result.date == original.date
         result.status == original.status
         result.authors.size() == 1
-        result.authors[0].name == "Dave Gibbons"
+        result.authors[0].firstname == "Dave"
+        result.authors[0].lastname == "Gibbons"
         result.authors[0].role == AuthorRole.ARTIST
     }
 }

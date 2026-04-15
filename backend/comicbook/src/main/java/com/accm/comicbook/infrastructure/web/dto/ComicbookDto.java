@@ -23,11 +23,13 @@ public record ComicbookDto(
 
     public record AuthorDto(
             UUID id,
-            @NotBlank String name,
+            @NotBlank String firstname,
+            @NotBlank String lastname,
+            String middlename,
             @NotNull AuthorRole role
     ) {
         static AuthorDto from(ComicbookAuthor author) {
-            return new AuthorDto(author.getId(), author.getName(), author.getRole());
+            return new AuthorDto(author.getId(), author.getFirstname(), author.getLastname(), author.getMiddlename(), author.getRole());
         }
     }
 

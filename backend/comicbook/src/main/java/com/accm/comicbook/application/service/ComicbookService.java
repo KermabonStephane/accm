@@ -45,7 +45,9 @@ public class ComicbookService implements CreateComicbookUseCase, GetComicbookUse
         List<ComicbookAuthor> authors = update.getAuthors().stream()
                 .map(a -> ComicbookAuthor.builder()
                         .id(UUID.randomUUID())
-                        .name(a.getName())
+                        .firstname(a.getFirstname())
+                        .lastname(a.getLastname())
+                        .middlename(a.getMiddlename())
                         .role(a.getRole())
                         .build())
                 .toList();

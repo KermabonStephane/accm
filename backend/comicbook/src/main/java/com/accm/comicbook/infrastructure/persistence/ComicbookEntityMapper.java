@@ -40,7 +40,9 @@ class ComicbookEntityMapper {
     private static ComicbookAuthorJpaEntity toAuthorEntity(ComicbookAuthor author) {
         AuthorJpaEntity authorEntity = new AuthorJpaEntity();
         authorEntity.setId(author.getId());
-        authorEntity.setName(author.getName());
+        authorEntity.setFirstname(author.getFirstname());
+        authorEntity.setLastname(author.getLastname());
+        authorEntity.setMiddlename(author.getMiddlename());
 
         ComicbookAuthorJpaEntity entity = new ComicbookAuthorJpaEntity();
         entity.setId(UUID.randomUUID());
@@ -52,7 +54,9 @@ class ComicbookEntityMapper {
     private static ComicbookAuthor toAuthorDomain(ComicbookAuthorJpaEntity entity) {
         return ComicbookAuthor.builder()
                 .id(entity.getAuthor().getId())
-                .name(entity.getAuthor().getName())
+                .firstname(entity.getAuthor().getFirstname())
+                .lastname(entity.getAuthor().getLastname())
+                .middlename(entity.getAuthor().getMiddlename())
                 .role(entity.getRole())
                 .build();
     }
