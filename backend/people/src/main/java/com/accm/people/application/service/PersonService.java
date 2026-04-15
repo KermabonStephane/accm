@@ -1,7 +1,5 @@
 package com.accm.people.application.service;
 
-import com.accm.people.application.command.CreatePersonCommand;
-import com.accm.people.application.command.UpdatePersonCommand;
 import com.accm.people.domain.model.Person;
 import com.accm.people.domain.model.PersonStatus;
 import com.accm.people.domain.port.in.*;
@@ -23,17 +21,7 @@ public class PersonService implements CreatePersonUseCase, UpdatePersonUseCase,
     private final PersonRepositoryPort personRepository;
 
     @Override
-    public Person createPerson(CreatePersonCommand command) {
-        Person person = Person.builder()
-                .id(UUID.randomUUID())
-                .firstname(command.firstname())
-                .lastname(command.lastname())
-                .nickname(command.nickname())
-                .email(command.email())
-                .status(PersonStatus.CREATED)
-                .role(command.role())
-                .password(command.password())
-                .build();
+    public Person createPerson(Person person) {
         return personRepository.save(person);
     }
 
@@ -51,17 +39,22 @@ public class PersonService implements CreatePersonUseCase, UpdatePersonUseCase,
     }
 
     @Override
-    public Person updatePerson(UUID id, UpdatePersonCommand command) {
-        Person person = getPersonById(id);
-        person.update(command.firstname(), command.lastname(), command.nickname(),
-                command.email(), command.role());
-        return personRepository.save(person);
+    public Person updatePerson(UUID id, Person update) {
+        Person existing = getPersonById(id);
+        return personRepository.save(existing.toBuilder()
+                .firstname(update.getFirstname())
+                .lastname(update.getLastname())
+                .nickname(update.getNickname())
+                .email(update.getEmail())
+                .role(update.getRole())
+                .build());
     }
 
     @Override
     public void deletePerson(UUID id) {
-        Person person = getPersonById(id);
-        person.markAsDeleted();
-        personRepository.save(person);
+        Person existing = getPersonById(id);
+        personRepository.save(existing.toBuilder()
+                .status(PersonStatus.DELETED)
+                .build());
     }
 }

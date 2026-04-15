@@ -1,7 +1,7 @@
 package com.accm.people.infrastructure.web;
 
-import com.accm.people.application.command.CreatePersonCommand;
-import com.accm.people.application.command.UpdatePersonCommand;
+import com.accm.people.domain.model.Person;
+import com.accm.people.domain.model.PersonStatus;
 import com.accm.people.domain.port.in.*;
 import com.accm.people.infrastructure.web.dto.PersonDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,23 +44,32 @@ public class PersonController {
     @PostMapping
     @Operation(summary = "Create a new person")
     public ResponseEntity<PersonDto> createPerson(@RequestBody @Valid PersonDto request) {
-        CreatePersonCommand command = new CreatePersonCommand(
-                request.firstname(), request.lastname(), request.nickname(),
-                request.email(), request.role(), request.password()
-        );
+        Person person = Person.builder()
+                .id(UUID.randomUUID())
+                .firstname(request.firstname())
+                .lastname(request.lastname())
+                .nickname(request.nickname())
+                .email(request.email())
+                .status(PersonStatus.CREATED)
+                .role(request.role())
+                .password(request.password())
+                .build();
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(PersonDto.from(createPersonUseCase.createPerson(command)));
+                .body(PersonDto.from(createPersonUseCase.createPerson(person)));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a person")
     public ResponseEntity<PersonDto> updatePerson(@PathVariable UUID id,
                                                   @RequestBody @Valid PersonDto request) {
-        UpdatePersonCommand command = new UpdatePersonCommand(
-                request.firstname(), request.lastname(), request.nickname(),
-                request.email(), request.role()
-        );
-        return ResponseEntity.ok(PersonDto.from(updatePersonUseCase.updatePerson(id, command)));
+        Person update = Person.builder()
+                .firstname(request.firstname())
+                .lastname(request.lastname())
+                .nickname(request.nickname())
+                .email(request.email())
+                .role(request.role())
+                .build();
+        return ResponseEntity.ok(PersonDto.from(updatePersonUseCase.updatePerson(id, update)));
     }
 
     @DeleteMapping("/{id}")
