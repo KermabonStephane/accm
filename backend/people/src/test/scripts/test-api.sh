@@ -53,17 +53,18 @@ do_curl "$BASE_URL/api-docs"
 assert_status 200 "OpenAPI docs reachable"
 
 # ── 1. CREATE ──────────────────────────────────────────────────────────────
+UNIQUE_SUFFIX=$(date +%s)
 section "1 · POST $API — create a person"
 do_curl -X POST "$API" \
   -H "Content-Type: application/json" \
-  -d '{
-    "firstname": "Jane",
-    "lastname":  "Doe",
-    "nickname":  "jdoe",
-    "email":     "jane.doe@example.com",
-    "role":      "USER",
-    "password":  "s3cr3t!"
-  }'
+  -d "{
+    \"firstname\": \"Jane\",
+    \"lastname\":  \"Doe\",
+    \"nickname\":  \"jdoe_${UNIQUE_SUFFIX}\",
+    \"email\":     \"jane.doe.${UNIQUE_SUFFIX}@example.com\",
+    \"role\":      \"USER\",
+    \"password\":  \"s3cr3t!\"
+  }"
 assert_status 201 "Create person"
 echo "$BODY" | pretty
 
