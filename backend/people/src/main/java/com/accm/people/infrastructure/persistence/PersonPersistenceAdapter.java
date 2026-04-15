@@ -17,47 +17,21 @@ public class PersonPersistenceAdapter implements PersonRepositoryPort {
 
     @Override
     public Person save(Person person) {
-        return toDomain(jpaRepository.save(toEntity(person)));
+        return PersonEntityMapper.toDomain(jpaRepository.save(PersonEntityMapper.toEntity(person)));
     }
 
     @Override
     public Optional<Person> findById(UUID id) {
-        return jpaRepository.findById(id).map(this::toDomain);
+        return jpaRepository.findById(id).map(PersonEntityMapper::toDomain);
     }
 
     @Override
     public List<Person> findAll() {
-        return jpaRepository.findAll().stream().map(this::toDomain).toList();
+        return jpaRepository.findAll().stream().map(PersonEntityMapper::toDomain).toList();
     }
 
     @Override
     public boolean existsByEmail(String email) {
         return jpaRepository.existsByEmail(email);
-    }
-
-    private PersonJpaEntity toEntity(Person person) {
-        PersonJpaEntity entity = new PersonJpaEntity();
-        entity.setId(person.getId());
-        entity.setFirstname(person.getFirstname());
-        entity.setLastname(person.getLastname());
-        entity.setNickname(person.getNickname());
-        entity.setEmail(person.getEmail());
-        entity.setStatus(person.getStatus());
-        entity.setRole(person.getRole());
-        entity.setPassword(person.getPassword());
-        return entity;
-    }
-
-    private Person toDomain(PersonJpaEntity entity) {
-        return Person.builder()
-                .id(entity.getId())
-                .firstname(entity.getFirstname())
-                .lastname(entity.getLastname())
-                .nickname(entity.getNickname())
-                .email(entity.getEmail())
-                .status(entity.getStatus())
-                .role(entity.getRole())
-                .password(entity.getPassword())
-                .build();
     }
 }

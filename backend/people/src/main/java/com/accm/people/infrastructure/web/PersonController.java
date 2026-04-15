@@ -3,9 +3,8 @@ package com.accm.people.infrastructure.web;
 import com.accm.people.application.command.CreatePersonCommand;
 import com.accm.people.application.command.UpdatePersonCommand;
 import com.accm.people.domain.port.in.*;
-import com.accm.people.infrastructure.web.dto.CreatePersonRequest;
+import com.accm.people.infrastructure.web.dto.PersonRequest;
 import com.accm.people.infrastructure.web.dto.PersonResponse;
-import com.accm.people.infrastructure.web.dto.UpdatePersonRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -45,7 +44,7 @@ public class PersonController {
 
     @PostMapping
     @Operation(summary = "Create a new person")
-    public ResponseEntity<PersonResponse> createPerson(@RequestBody @Valid CreatePersonRequest request) {
+    public ResponseEntity<PersonResponse> createPerson(@RequestBody @Valid PersonRequest request) {
         CreatePersonCommand command = new CreatePersonCommand(
                 request.firstname(), request.lastname(), request.nickname(),
                 request.email(), request.role(), request.password()
@@ -57,7 +56,7 @@ public class PersonController {
     @PutMapping("/{id}")
     @Operation(summary = "Update a person")
     public ResponseEntity<PersonResponse> updatePerson(@PathVariable UUID id,
-                                                       @RequestBody @Valid UpdatePersonRequest request) {
+                                                       @RequestBody @Valid PersonRequest request) {
         UpdatePersonCommand command = new UpdatePersonCommand(
                 request.firstname(), request.lastname(), request.nickname(),
                 request.email(), request.role()
