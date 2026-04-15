@@ -17,34 +17,59 @@ CYAN='\033[0;36m'; BOLD='\033[1m'; RESET='\033[0m'
 # ── helpers ────────────────────────────────────────────────────────────────
 pretty() {
   if command -v jq &>/dev/null; then jq '.'; else python3 -m json.tool 2>/dev/null || cat; fi
+  return 0
 }
 
-section() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
-ok()      { echo -e "  ${GREEN}✔ $1${RESET}"; }
-fail()    { echo -e "  ${RED}✘ $1${RESET}"; exit 1; }
-info()    { echo -e "  ${YELLOW}$1${RESET}"; }
+section() {
+  local title="$1"
+  echo -e "\n${CYAN}${BOLD}▶ ${title}${RESET}"
+  return 0
+}
+
+ok() {
+  local msg="$1"
+  echo -e "  ${GREEN}✔ ${msg}${RESET}"
+  return 0
+}
+
+fail() {
+  local msg="$1"
+  echo -e "  ${RED}✘ ${msg}${RESET}"
+  exit 1
+}
+
+info() {
+  local msg="$1"
+  echo -e "  ${YELLOW}${msg}${RESET}"
+  return 0
+}
 
 # Execute a curl call and split body / status code.
 # The response is written as: <body>HTTPSTATUS:<code>
 # Works on macOS and Linux (no head -n -1).
 do_curl() {
-  local RAW
-  RAW=$(curl -s -w "HTTPSTATUS:%{http_code}" "$@")
-  BODY="${RAW%HTTPSTATUS:*}"
-  STATUS="${RAW##*HTTPSTATUS:}"
+  local raw
+  raw=$(curl -s -w "HTTPSTATUS:%{http_code}" "$@")
+  BODY="${raw%HTTPSTATUS:*}"
+  STATUS="${raw##*HTTPSTATUS:}"
+  return 0
 }
 
 assert_status() {
-  local expected="$1" label="$2"
-  if [ "$STATUS" -eq "$expected" ]; then
+  local expected="$1"
+  local label="$2"
+  if [[ "$STATUS" -eq "$expected" ]]; then
     ok "$label — HTTP $STATUS"
   else
     fail "$label — expected HTTP $expected, got HTTP $STATUS"
   fi
+  return 0
 }
 
 json_field() {
-  python3 -c "import sys,json; print(json.load(sys.stdin)['$1'])" <<< "$BODY" 2>/dev/null || echo "UNKNOWN"
+  local field="$1"
+  python3 -c "import sys,json; print(json.load(sys.stdin)['${field}'])" <<< "$BODY" 2>/dev/null || echo "UNKNOWN"
+  return 0
 }
 
 # ── 0. health-check ────────────────────────────────────────────────────────
@@ -78,7 +103,7 @@ else
 fi
 
 PERSON_STATUS=$(json_field status)
-[ "$PERSON_STATUS" = "CREATED" ] && ok "Status is CREATED" || fail "Expected status CREATED, got $PERSON_STATUS"
+[[ "$PERSON_STATUS" = "CREATED" ]] && ok "Status is CREATED" || fail "Expected status CREATED, got $PERSON_STATUS"
 
 # ── 2. LIST ────────────────────────────────────────────────────────────────
 section "2 · GET $API — list all people"
@@ -108,7 +133,7 @@ do_curl -X PUT "$API/$PERSON_ID" \
 assert_status 200 "Update person"
 echo "$BODY" | pretty
 UPDATED_LASTNAME=$(json_field lastname)
-[ "$UPDATED_LASTNAME" = "Smith" ] && ok "Lastname updated to Smith" || fail "Expected lastname Smith, got $UPDATED_LASTNAME"
+[[ "$UPDATED_LASTNAME" = "Smith" ]] && ok "Lastname updated to Smith" || fail "Expected lastname Smith, got $UPDATED_LASTNAME"
 
 # ── 5. DELETE (soft) ───────────────────────────────────────────────────────
 section "5 · DELETE $API/$PERSON_ID — soft delete"
@@ -121,7 +146,7 @@ do_curl "$API/$PERSON_ID"
 assert_status 200 "Person still exists after soft delete"
 echo "$BODY" | pretty
 DELETED_STATUS=$(json_field status)
-[ "$DELETED_STATUS" = "DELETED" ] && ok "Status is DELETED — row preserved" || fail "Expected status DELETED, got $DELETED_STATUS"
+[[ "$DELETED_STATUS" = "DELETED" ]] && ok "Status is DELETED — row preserved" || fail "Expected status DELETED, got $DELETED_STATUS"
 
 # ── 7. NOT FOUND ───────────────────────────────────────────────────────────
 section "7 · GET $API/00000000-0000-0000-0000-000000000000 — unknown id"
