@@ -22,6 +22,7 @@
         <spock.version>2.4-groovy-5.0</spock.version>
         <groovy.version>5.0.3</groovy.version>
         <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
+        <springdoc-openapi.version>2.8.0</springdoc-openapi.version>
         <byte-buddy.version>1.18.3</byte-buddy.version>
         <objenesis.version>3.4</objenesis.version>
         <hamcrest.version>3.0</hamcrest.version>
@@ -124,5 +125,6 @@
 
     <modules>
         <module>comicbook</module>
+        <module>people</module>
     </modules>
 </project>
