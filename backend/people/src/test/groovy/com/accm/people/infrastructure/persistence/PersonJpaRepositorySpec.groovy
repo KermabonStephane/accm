@@ -3,7 +3,7 @@ package com.accm.people.infrastructure.persistence
 import com.accm.people.domain.model.PersonRole
 import com.accm.people.domain.model.PersonStatus
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.hibernate.test.autoconfigure.orm.jpa.DataJpaTest
 import spock.lang.Specification
 
 @DataJpaTest
