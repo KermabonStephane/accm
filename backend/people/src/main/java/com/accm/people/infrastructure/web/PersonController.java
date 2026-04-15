@@ -3,8 +3,7 @@ package com.accm.people.infrastructure.web;
 import com.accm.people.application.command.CreatePersonCommand;
 import com.accm.people.application.command.UpdatePersonCommand;
 import com.accm.people.domain.port.in.*;
-import com.accm.people.infrastructure.web.dto.PersonRequest;
-import com.accm.people.infrastructure.web.dto.PersonResponse;
+import com.accm.people.infrastructure.web.dto.PersonDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -30,38 +29,38 @@ public class PersonController {
 
     @GetMapping
     @Operation(summary = "List all people")
-    public ResponseEntity<List<PersonResponse>> listPeople() {
+    public ResponseEntity<List<PersonDto>> listPeople() {
         return ResponseEntity.ok(
-                listPeopleUseCase.listPeople().stream().map(PersonResponse::from).toList()
+                listPeopleUseCase.listPeople().stream().map(PersonDto::from).toList()
         );
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a person by ID")
-    public ResponseEntity<PersonResponse> getPerson(@PathVariable UUID id) {
-        return ResponseEntity.ok(PersonResponse.from(getPersonUseCase.getPersonById(id)));
+    public ResponseEntity<PersonDto> getPerson(@PathVariable UUID id) {
+        return ResponseEntity.ok(PersonDto.from(getPersonUseCase.getPersonById(id)));
     }
 
     @PostMapping
     @Operation(summary = "Create a new person")
-    public ResponseEntity<PersonResponse> createPerson(@RequestBody @Valid PersonRequest request) {
+    public ResponseEntity<PersonDto> createPerson(@RequestBody @Valid PersonDto request) {
         CreatePersonCommand command = new CreatePersonCommand(
                 request.firstname(), request.lastname(), request.nickname(),
                 request.email(), request.role(), request.password()
         );
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(PersonResponse.from(createPersonUseCase.createPerson(command)));
+                .body(PersonDto.from(createPersonUseCase.createPerson(command)));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a person")
-    public ResponseEntity<PersonResponse> updatePerson(@PathVariable UUID id,
-                                                       @RequestBody @Valid PersonRequest request) {
+    public ResponseEntity<PersonDto> updatePerson(@PathVariable UUID id,
+                                                  @RequestBody @Valid PersonDto request) {
         UpdatePersonCommand command = new UpdatePersonCommand(
                 request.firstname(), request.lastname(), request.nickname(),
                 request.email(), request.role()
         );
-        return ResponseEntity.ok(PersonResponse.from(updatePersonUseCase.updatePerson(id, command)));
+        return ResponseEntity.ok(PersonDto.from(updatePersonUseCase.updatePerson(id, command)));
     }
 
     @DeleteMapping("/{id}")

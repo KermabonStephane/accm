@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 class PersonResponseMapperSpec extends Specification {
 
-    def "PersonResponse.from should map all fields except password"() {
+    def "PersonDto.from should map all fields from domain Person"() {
         given:
         def person = Person.builder()
                 .id(UUID.fromString("00000000-0000-0000-0000-000000000001"))
@@ -21,19 +21,19 @@ class PersonResponseMapperSpec extends Specification {
                 .build()
 
         when:
-        def response = PersonResponse.from(person)
+        def dto = PersonDto.from(person)
 
         then:
-        response.id() == person.id
-        response.firstname() == person.firstname
-        response.lastname() == person.lastname
-        response.nickname() == person.nickname
-        response.email() == person.email
-        response.status() == person.status
-        response.role() == person.role
+        dto.id() == person.id
+        dto.firstname() == person.firstname
+        dto.lastname() == person.lastname
+        dto.nickname() == person.nickname
+        dto.email() == person.email
+        dto.status() == person.status
+        dto.role() == person.role
     }
 
-    def "PersonResponse.from should never expose the password"() {
+    def "PersonDto.from should never expose the password"() {
         given:
         def person = Person.builder()
                 .id(UUID.randomUUID())
@@ -47,9 +47,9 @@ class PersonResponseMapperSpec extends Specification {
                 .build()
 
         when:
-        def response = PersonResponse.from(person)
+        def dto = PersonDto.from(person)
 
-        then: "the response record has no password field"
-        !response.hasProperty("password")
+        then:
+        dto.password() == null
     }
 }
