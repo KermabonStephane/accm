@@ -127,7 +127,7 @@
     </build>
 
     <modules>
-        <module>comicBook</module>
+        <module>comicbook</module>
         <module>people</module>
     </modules>
 </project>
