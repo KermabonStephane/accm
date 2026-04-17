@@ -16,6 +16,6 @@ class AuthorPersistenceAdapter implements AuthorRepositoryPort {
 
     @Override
     public Optional<Author> findById(UUID id) {
-        return repository.findById(id).map(ComicbookEntityMapper::toAuthorModel);
+        return repository.findById(id).map(ComicBookEntityMapper::toAuthorModel);
     }
 }

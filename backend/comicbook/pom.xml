@@ -10,7 +10,7 @@
     </parent>
     <artifactId>accm-comicbook</artifactId>
     <name>accm-comicbook</name>
-    <description>ACCM — Comicbook collection Spring Boot 4 REST API</description>
+    <description>ACCM — ComicBook collection Spring Boot 4 REST API</description>
 
     <dependencies>
         <dependency>

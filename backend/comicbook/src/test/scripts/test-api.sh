@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# test-api.sh — smoke test for the Comicbook REST API
+# test-api.sh — smoke test for the ComicBook REST API
 # Usage: ./test-api.sh [BASE_URL]
 #   BASE_URL defaults to http://localhost:8080
 # Compatible with macOS (BSD) and Linux.
@@ -8,7 +8,7 @@
 set -euo pipefail
 
 BASE_URL="${1:-http://localhost:8080}"
-API="$BASE_URL/api/v1/comicbooks"
+API="$BASE_URL/api/v1/comicBooks"
 
 # ── colours ────────────────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -87,7 +87,7 @@ assert_status 200 "OpenAPI docs reachable"
 
 # ── 1. CREATE ──────────────────────────────────────────────────────────────
 UNIQUE_SUFFIX=$(date +%s)
-section "1 · POST $API — create a comicbook with authors"
+section "1 · POST $API — create a comicBook with authors"
 do_curl -X POST "$API" \
   -H "Content-Type: application/json" \
   -d "{
@@ -101,35 +101,35 @@ do_curl -X POST "$API" \
       {\"firstname\": \"John\",  \"lastname\": \"Higgins\", \"role\": \"COLORIST\"}
     ]
   }"
-assert_status 201 "Create comicbook"
+assert_status 201 "Create comicBook"
 echo "$BODY" | pretty
 
-COMICBOOK_ID=$(json_field id)
-info "Created comicbook id: $COMICBOOK_ID"
+ComicBook_ID=$(json_field id)
+info "Created comicBook id: $ComicBook_ID"
 
-COMICBOOK_STATUS=$(json_field status)
-[[ "$COMICBOOK_STATUS" = "ACTIVE" ]] && ok "Status is ACTIVE" || fail "Expected status ACTIVE, got $COMICBOOK_STATUS"
+ComicBook_STATUS=$(json_field status)
+[[ "$ComicBook_STATUS" = "ACTIVE" ]] && ok "Status is ACTIVE" || fail "Expected status ACTIVE, got $ComicBook_STATUS"
 
 ALAN_MOORE_ID=$(python3 -c "import sys,json; authors=json.load(sys.stdin)['authors']; print(next(a['id'] for a in authors if a['lastname']=='Moore'))" <<< "$BODY")
 info "Alan Moore author id: $ALAN_MOORE_ID"
 
 # ── 2. LIST ────────────────────────────────────────────────────────────────
-section "2 · GET $API — list all comicbooks"
+section "2 · GET $API — list all comicBooks"
 do_curl "$API"
-assert_status 200 "List comicbooks"
+assert_status 200 "List comicBooks"
 echo "$BODY" | pretty
 COUNT=$(json_array_len)
-info "Total comicbooks returned: $COUNT"
+info "Total comicBooks returned: $COUNT"
 
 # ── 3. GET ONE ─────────────────────────────────────────────────────────────
-section "3 · GET $API/$COMICBOOK_ID — get comicbook by id"
-do_curl "$API/$COMICBOOK_ID"
-assert_status 200 "Get comicbook by id"
+section "3 · GET $API/$ComicBook_ID — get comicBook by id"
+do_curl "$API/$ComicBook_ID"
+assert_status 200 "Get comicBook by id"
 echo "$BODY" | pretty
 
 # ── 4. UPDATE ──────────────────────────────────────────────────────────────
-section "4 · PUT $API/$COMICBOOK_ID — update comicbook"
-do_curl -X PUT "$API/$COMICBOOK_ID" \
+section "4 · PUT $API/$ComicBook_ID — update comicBook"
+do_curl -X PUT "$API/$ComicBook_ID" \
   -H "Content-Type: application/json" \
   -d "{
     \"title\": \"Watchmen — Definitive Edition_${UNIQUE_SUFFIX}\",
@@ -141,32 +141,32 @@ do_curl -X PUT "$API/$COMICBOOK_ID" \
       {\"firstname\": \"John\", \"lastname\": \"Higgins\", \"role\": \"COLORIST\"}
     ]
   }"
-assert_status 200 "Update comicbook"
+assert_status 200 "Update comicBook"
 echo "$BODY" | pretty
 UPDATED_TITLE=$(json_field title)
 [[ "$UPDATED_TITLE" = "Watchmen — Definitive Edition_${UNIQUE_SUFFIX}" ]] \
   && ok "Title updated" \
   || fail "Expected updated title, got $UPDATED_TITLE"
 
-# ── 5. CREATE second comicbook (for author management tests) ───────────────
-section "5 · POST $API — create a second comicbook (no authors)"
+# ── 5. CREATE second comicBook (for author management tests) ───────────────
+section "5 · POST $API — create a second comicBook (no authors)"
 do_curl -X POST "$API" \
   -H "Content-Type: application/json" \
   -d "{\"title\": \"V for Vendetta_${UNIQUE_SUFFIX}\", \"isbn\": \"978-0-930289-52-4\", \"date\": \"1988-03-01\", \"authors\": []}"
-assert_status 201 "Create second comicbook"
-COMICBOOK2_ID=$(json_field id)
-info "Created second comicbook id: $COMICBOOK2_ID"
+assert_status 201 "Create second comicBook"
+ComicBook2_ID=$(json_field id)
+info "Created second comicBook id: $ComicBook2_ID"
 
 # ── 6. LIST AUTHORS (empty) ────────────────────────────────────────────────
-section "6 · GET $API/$COMICBOOK2_ID/authors — list authors (empty)"
-do_curl "$API/$COMICBOOK2_ID/authors"
+section "6 · GET $API/$ComicBook2_ID/authors — list authors (empty)"
+do_curl "$API/$ComicBook2_ID/authors"
 assert_status 200 "List authors — empty"
 echo "$BODY" | pretty
 [[ "$(json_array_len)" = "0" ]] && ok "No authors yet" || fail "Expected empty authors list"
 
 # ── 7. ADD AUTHOR ──────────────────────────────────────────────────────────
-section "7 · POST $API/$COMICBOOK2_ID/authors — add Alan Moore as WRITER"
-do_curl -X POST "$API/$COMICBOOK2_ID/authors" \
+section "7 · POST $API/$ComicBook2_ID/authors — add Alan Moore as WRITER"
+do_curl -X POST "$API/$ComicBook2_ID/authors" \
   -H "Content-Type: application/json" \
   -d "{\"authorId\": \"$ALAN_MOORE_ID\", \"role\": \"WRITER\"}"
 assert_status 201 "Add author"
@@ -175,41 +175,41 @@ ADDED_LASTNAME=$(json_field lastname)
 [[ "$ADDED_LASTNAME" = "Moore" ]] && ok "Correct author returned" || fail "Expected Moore, got $ADDED_LASTNAME"
 
 # ── 8. LIST AUTHORS (one) ──────────────────────────────────────────────────
-section "8 · GET $API/$COMICBOOK2_ID/authors — list authors (one)"
-do_curl "$API/$COMICBOOK2_ID/authors"
+section "8 · GET $API/$ComicBook2_ID/authors — list authors (one)"
+do_curl "$API/$ComicBook2_ID/authors"
 assert_status 200 "List authors — one entry"
 echo "$BODY" | pretty
 [[ "$(json_array_len)" = "1" ]] && ok "One author listed" || fail "Expected 1 author"
 
 # ── 9. ADD SAME AUTHOR+ROLE AGAIN (conflict) ──────────────────────────────
-section "9 · POST $API/$COMICBOOK2_ID/authors — duplicate author+role → 409"
-do_curl -X POST "$API/$COMICBOOK2_ID/authors" \
+section "9 · POST $API/$ComicBook2_ID/authors — duplicate author+role → 409"
+do_curl -X POST "$API/$ComicBook2_ID/authors" \
   -H "Content-Type: application/json" \
   -d "{\"authorId\": \"$ALAN_MOORE_ID\", \"role\": \"WRITER\"}"
 assert_status 409 "Duplicate author+role returns 409"
 
 # ── 10. ADD SAME AUTHOR WITH DIFFERENT ROLE ───────────────────────────────
-section "10 · POST $API/$COMICBOOK2_ID/authors — same author, different role"
-do_curl -X POST "$API/$COMICBOOK2_ID/authors" \
+section "10 · POST $API/$ComicBook2_ID/authors — same author, different role"
+do_curl -X POST "$API/$ComicBook2_ID/authors" \
   -H "Content-Type: application/json" \
   -d "{\"authorId\": \"$ALAN_MOORE_ID\", \"role\": \"ARTIST\"}"
 assert_status 201 "Same author with different role — HTTP 201"
 
 # ── 11. LIST AUTHORS (two) ─────────────────────────────────────────────────
-section "11 · GET $API/$COMICBOOK2_ID/authors — list authors (two)"
-do_curl "$API/$COMICBOOK2_ID/authors"
+section "11 · GET $API/$ComicBook2_ID/authors — list authors (two)"
+do_curl "$API/$ComicBook2_ID/authors"
 assert_status 200 "List authors — two entries"
 echo "$BODY" | pretty
 [[ "$(json_array_len)" = "2" ]] && ok "Two authors listed" || fail "Expected 2 authors"
 
 # ── 12. REMOVE AUTHOR ─────────────────────────────────────────────────────
-section "12 · DELETE $API/$COMICBOOK2_ID/authors/$ALAN_MOORE_ID/roles/WRITER — remove WRITER role"
-do_curl -X DELETE "$API/$COMICBOOK2_ID/authors/$ALAN_MOORE_ID/roles/WRITER"
+section "12 · DELETE $API/$ComicBook2_ID/authors/$ALAN_MOORE_ID/roles/WRITER — remove WRITER role"
+do_curl -X DELETE "$API/$ComicBook2_ID/authors/$ALAN_MOORE_ID/roles/WRITER"
 assert_status 204 "Remove author role"
 
 # ── 13. LIST AUTHORS (one remaining) ──────────────────────────────────────
-section "13 · GET $API/$COMICBOOK2_ID/authors — list authors (one remaining)"
-do_curl "$API/$COMICBOOK2_ID/authors"
+section "13 · GET $API/$ComicBook2_ID/authors — list authors (one remaining)"
+do_curl "$API/$ComicBook2_ID/authors"
 assert_status 200 "List authors after removal"
 echo "$BODY" | pretty
 [[ "$(json_array_len)" = "1" ]] && ok "One author remaining" || fail "Expected 1 author after removal"
@@ -217,19 +217,19 @@ REMAINING_ROLE=$(json_array_field 0 role)
 [[ "$REMAINING_ROLE" = "ARTIST" ]] && ok "ARTIST role remains" || fail "Expected ARTIST role, got $REMAINING_ROLE"
 
 # ── 14. REMOVE AUTHOR — NOT FOUND ─────────────────────────────────────────
-section "14 · DELETE $API/$COMICBOOK2_ID/authors/$ALAN_MOORE_ID/roles/WRITER — already removed → 404"
-do_curl -X DELETE "$API/$COMICBOOK2_ID/authors/$ALAN_MOORE_ID/roles/WRITER"
+section "14 · DELETE $API/$ComicBook2_ID/authors/$ALAN_MOORE_ID/roles/WRITER — already removed → 404"
+do_curl -X DELETE "$API/$ComicBook2_ID/authors/$ALAN_MOORE_ID/roles/WRITER"
 assert_status 404 "Already-removed author-role returns 404"
 
 # ── 15. DELETE (soft) ─────────────────────────────────────────────────────
-section "15 · DELETE $API/$COMICBOOK_ID — soft delete"
-do_curl -X DELETE "$API/$COMICBOOK_ID"
-assert_status 204 "Soft delete comicbook"
+section "15 · DELETE $API/$ComicBook_ID — soft delete"
+do_curl -X DELETE "$API/$ComicBook_ID"
+assert_status 204 "Soft delete comicBook"
 
 # ── 16. VERIFY soft delete ────────────────────────────────────────────────
-section "16 · GET $API/$COMICBOOK_ID — verify status after soft delete"
-do_curl "$API/$COMICBOOK_ID"
-assert_status 200 "Comicbook still exists after soft delete"
+section "16 · GET $API/$ComicBook_ID — verify status after soft delete"
+do_curl "$API/$ComicBook_ID"
+assert_status 200 "ComicBook still exists after soft delete"
 echo "$BODY" | pretty
 DELETED_STATUS=$(json_field status)
 [[ "$DELETED_STATUS" = "DELETED" ]] && ok "Status is DELETED — row preserved" || fail "Expected status DELETED, got $DELETED_STATUS"

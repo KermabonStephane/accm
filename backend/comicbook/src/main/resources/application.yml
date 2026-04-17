@@ -1,6 +1,6 @@
 spring:
   application:
-    name: accm-comicbook
+    name: accm-comicBook
   datasource:
     url: jdbc:postgresql://localhost:5432/accm
     username: accm

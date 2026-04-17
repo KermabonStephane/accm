@@ -4,6 +4,6 @@ import com.accm.comicbook.domain.model.AuthorRole;
 
 import java.util.UUID;
 
-public interface RemoveComicbookAuthorUseCase {
-    void removeAuthor(UUID comicbookId, UUID authorId, AuthorRole role);
+public interface RemoveComicBookAuthorUseCase {
+    void removeAuthor(UUID comicBookId, UUID authorId, AuthorRole role);
 }

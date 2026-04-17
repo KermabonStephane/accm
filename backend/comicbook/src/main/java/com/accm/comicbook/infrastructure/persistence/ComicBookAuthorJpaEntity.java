@@ -9,14 +9,18 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "comicbook_author")
+@Table(name = "comicBook_author")
 @Getter
 @Setter
 @NoArgsConstructor
-class ComicbookAuthorJpaEntity {
+class ComicBookAuthorJpaEntity {
 
     @Id
     private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comicBook_id", nullable = false)
+    private ComicBookJpaEntity comicBook;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "author_id")

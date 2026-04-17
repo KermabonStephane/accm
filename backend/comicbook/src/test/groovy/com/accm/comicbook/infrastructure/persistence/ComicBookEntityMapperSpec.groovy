@@ -1,55 +1,55 @@
 package com.accm.comicbook.infrastructure.persistence
 
 import com.accm.comicbook.domain.model.AuthorRole
-import com.accm.comicbook.domain.model.Comicbook
-import com.accm.comicbook.domain.model.ComicbookAuthor
-import com.accm.comicbook.domain.model.ComicbookStatus
+import com.accm.comicbook.domain.model.ComicBook
+import com.accm.comicbook.domain.model.ComicBookAuthor
+import com.accm.comicbook.domain.model.ComicBookStatus
 import spock.lang.Specification
 
 import java.time.LocalDate
 
-class ComicbookEntityMapperSpec extends Specification {
+class ComicBookEntityMapperSpec extends Specification {
 
     def "toEntity maps all scalar fields"() {
         given:
-        def comicbook = Comicbook.builder()
+        def comicBook = ComicBook.builder()
                 .id(UUID.randomUUID())
                 .title("Watchmen")
                 .isbn("978-1-4012-0713-1")
                 .date(LocalDate.of(1987, 9, 1))
-                .status(ComicbookStatus.ACTIVE)
+                .status(ComicBookStatus.ACTIVE)
                 .authors([])
                 .build()
 
         when:
-        def entity = ComicbookEntityMapper.toEntity(comicbook)
+        def entity = ComicBookEntityMapper.toEntity(comicBook)
 
         then:
-        entity.id == comicbook.id
+        entity.id == comicBook.id
         entity.title == "Watchmen"
         entity.isbn == "978-1-4012-0713-1"
         entity.date == LocalDate.of(1987, 9, 1)
-        entity.status == ComicbookStatus.ACTIVE
+        entity.status == ComicBookStatus.ACTIVE
         entity.authors.isEmpty()
     }
 
     def "toEntity maps authors"() {
         given:
-        def author = ComicbookAuthor.builder()
+        def author = ComicBookAuthor.builder()
                 .id(UUID.randomUUID())
                 .firstname("Alan")
                 .lastname("Moore")
                 .role(AuthorRole.WRITER)
                 .build()
-        def comicbook = Comicbook.builder()
+        def comicBook = ComicBook.builder()
                 .id(UUID.randomUUID())
                 .title("Watchmen")
-                .status(ComicbookStatus.ACTIVE)
+                .status(ComicBookStatus.ACTIVE)
                 .authors([author])
                 .build()
 
         when:
-        def entity = ComicbookEntityMapper.toEntity(comicbook)
+        def entity = ComicBookEntityMapper.toEntity(comicBook)
 
         then:
         entity.authors.size() == 1
@@ -61,45 +61,45 @@ class ComicbookEntityMapperSpec extends Specification {
 
     def "toDomain maps all scalar fields"() {
         given:
-        def entity = new ComicbookJpaEntity()
+        def entity = new ComicBookJpaEntity()
         entity.id = UUID.randomUUID()
         entity.title = "Watchmen"
         entity.isbn = "978-1-4012-0713-1"
         entity.date = LocalDate.of(1987, 9, 1)
-        entity.status = ComicbookStatus.ACTIVE
+        entity.status = ComicBookStatus.ACTIVE
         entity.authors = []
 
         when:
-        def comicbook = ComicbookEntityMapper.toDomain(entity)
+        def comicBook = ComicBookEntityMapper.toDomain(entity)
 
         then:
-        comicbook.id == entity.id
-        comicbook.title == "Watchmen"
-        comicbook.isbn == "978-1-4012-0713-1"
-        comicbook.date == LocalDate.of(1987, 9, 1)
-        comicbook.status == ComicbookStatus.ACTIVE
-        comicbook.authors.isEmpty()
+        comicBook.id == entity.id
+        comicBook.title == "Watchmen"
+        comicBook.isbn == "978-1-4012-0713-1"
+        comicBook.date == LocalDate.of(1987, 9, 1)
+        comicBook.status == ComicBookStatus.ACTIVE
+        comicBook.authors.isEmpty()
     }
 
     def "roundtrip toEntity → toDomain preserves all data"() {
         given:
-        def author = ComicbookAuthor.builder()
+        def author = ComicBookAuthor.builder()
                 .id(UUID.randomUUID())
                 .firstname("Dave")
                 .lastname("Gibbons")
                 .role(AuthorRole.ARTIST)
                 .build()
-        def original = Comicbook.builder()
+        def original = ComicBook.builder()
                 .id(UUID.randomUUID())
                 .title("Watchmen")
                 .isbn("978-1-4012-0713-1")
                 .date(LocalDate.of(1987, 9, 1))
-                .status(ComicbookStatus.ACTIVE)
+                .status(ComicBookStatus.ACTIVE)
                 .authors([author])
                 .build()
 
         when:
-        def result = ComicbookEntityMapper.toDomain(ComicbookEntityMapper.toEntity(original))
+        def result = ComicBookEntityMapper.toDomain(ComicBookEntityMapper.toEntity(original))
 
         then:
         result.id == original.id

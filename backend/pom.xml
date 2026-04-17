@@ -13,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>accm-backend-parent</name>
-    <description>Application Comicbook Collection Management — Backend Parent POM</description>
+    <description>Application ComicBook Collection Management — Backend Parent POM</description>
 
     <properties>
         <java.version>25</java.version>
@@ -127,7 +127,7 @@
     </build>
 
     <modules>
-        <module>comicbook</module>
+        <module>comicBook</module>
         <module>people</module>
     </modules>
 </project>
