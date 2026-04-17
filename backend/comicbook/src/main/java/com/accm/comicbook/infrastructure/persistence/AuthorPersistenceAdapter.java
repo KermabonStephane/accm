@@ -17,12 +17,8 @@ class AuthorPersistenceAdapter implements AuthorRepositoryPort {
 
     @Override
     public Author save(Author author) {
-        AuthorJpaEntity entity = new AuthorJpaEntity();
-        entity.setId(author.id() != null ? author.id() : UUID.randomUUID());
-        entity.setFirstname(author.firstname());
-        entity.setLastname(author.lastname());
-        entity.setMiddlename(author.middlename());
-        return mapper.toAuthorModel(repository.save(entity));
+        Author authorWithId = author.id() != null ? author : new Author(UUID.randomUUID(), author.firstname(), author.lastname(), author.middlename());
+        return mapper.toAuthorModel(repository.save(mapper.toEntity(authorWithId)));
     }
 
     @Override

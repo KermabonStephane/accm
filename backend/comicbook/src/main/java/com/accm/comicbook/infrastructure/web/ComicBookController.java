@@ -8,22 +8,17 @@ import com.accm.comicbook.domain.port.in.*;
 import com.accm.comicbook.infrastructure.web.dto.ComicBookDto;
 import com.accm.comicbook.infrastructure.web.dto.ComicBookDto.AuthorDto;
 import com.accm.comicbook.infrastructure.web.dto.ComicBookDto.ComicBookAuthorRequest;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/comicbooks")
 @RequiredArgsConstructor
-@Tag(name = "ComicBooks", description = "ComicBook collection management API")
-class ComicBookController {
+class ComicBookController implements ComicBookApi {
 
     private final CreateComicBookUseCase createComicBookUseCase;
     private final GetComicBookUseCase getComicBookUseCase;
@@ -35,23 +30,20 @@ class ComicBookController {
     private final RemoveComicBookAuthorUseCase removeComicBookAuthorUseCase;
     private final ComicBookWebMapper webMapper;
 
-    @GetMapping
-    @Operation(summary = "List all comicBooks")
-    ResponseEntity<List<ComicBookDto>> listComicBooks() {
+    @Override
+    public ResponseEntity<List<ComicBookDto>> listComicBooks() {
         return ResponseEntity.ok(
                 listComicBooksUseCase.listComicBooks().stream().map(webMapper::toDto).toList()
         );
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get a comicBook by ID")
-    ResponseEntity<ComicBookDto> getComicBook(@PathVariable UUID id) {
+    @Override
+    public ResponseEntity<ComicBookDto> getComicBook(UUID id) {
         return ResponseEntity.ok(webMapper.toDto(getComicBookUseCase.getComicBookById(id)));
     }
 
-    @PostMapping
-    @Operation(summary = "Create a new comicBook")
-    ResponseEntity<ComicBookDto> createComicBook(@RequestBody @Valid ComicBookDto request) {
+    @Override
+    public ResponseEntity<ComicBookDto> createComicBook(ComicBookDto request) {
         ComicBook comicBook = webMapper.toDomain(request).toBuilder()
                 .id(UUID.randomUUID())
                 .status(ComicBookStatus.ACTIVE)
@@ -60,24 +52,19 @@ class ComicBookController {
                 .body(webMapper.toDto(createComicBookUseCase.createComicBook(comicBook)));
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "Update a comicBook")
-    ResponseEntity<ComicBookDto> updateComicBook(@PathVariable UUID id,
-                                                 @RequestBody @Valid ComicBookDto request) {
+    @Override
+    public ResponseEntity<ComicBookDto> updateComicBook(UUID id, ComicBookDto request) {
         return ResponseEntity.ok(
                 webMapper.toDto(updateComicBookUseCase.updateComicBook(id, webMapper.toDomain(request))));
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Soft-delete a comicBook (marks status as DELETED)")
-    void deleteComicBook(@PathVariable UUID id) {
+    @Override
+    public void deleteComicBook(UUID id) {
         deleteComicBookUseCase.deleteComicBook(id);
     }
 
-    @GetMapping("/{comicBookId}/authors")
-    @Operation(summary = "List authors of a comicBook")
-    ResponseEntity<List<AuthorDto>> listAuthors(@PathVariable UUID comicBookId) {
+    @Override
+    public ResponseEntity<List<AuthorDto>> listAuthors(UUID comicBookId) {
         return ResponseEntity.ok(
                 listComicBookAuthorsUseCase.listAuthors(comicBookId).stream()
                         .map(webMapper::toDto)
@@ -85,20 +72,14 @@ class ComicBookController {
         );
     }
 
-    @PostMapping("/{comicBookId}/authors")
-    @Operation(summary = "Add an author to a comicBook")
-    ResponseEntity<AuthorDto> addAuthor(@PathVariable UUID comicBookId,
-                                        @RequestBody @Valid ComicBookAuthorRequest request) {
+    @Override
+    public ResponseEntity<AuthorDto> addAuthor(UUID comicBookId, ComicBookAuthorRequest request) {
         ComicBookAuthor author = addComicBookAuthorUseCase.addAuthor(comicBookId, request.authorId(), request.role());
         return ResponseEntity.status(HttpStatus.CREATED).body(webMapper.toDto(author));
     }
 
-    @DeleteMapping("/{comicBookId}/authors/{authorId}/roles/{role}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Remove an author role from a comicBook")
-    void removeAuthor(@PathVariable UUID comicBookId,
-                      @PathVariable UUID authorId,
-                      @PathVariable AuthorRole role) {
+    @Override
+    public void removeAuthor(UUID comicBookId, UUID authorId, AuthorRole role) {
         removeComicBookAuthorUseCase.removeAuthor(comicBookId, authorId, role);
     }
 }
