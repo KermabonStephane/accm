@@ -6,5 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AuthorRepositoryPort {
+    Author save(Author author);
     Optional<Author> findById(UUID id);
 }

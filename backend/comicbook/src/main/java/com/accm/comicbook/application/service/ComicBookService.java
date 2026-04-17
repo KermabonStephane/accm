@@ -24,7 +24,22 @@ public class ComicBookService implements CreateComicBookUseCase, GetComicBookUse
 
     @Override
     public ComicBook createComicBook(ComicBook comicBook) {
-        return comicBookRepository.save(comicBook);
+        ComicBook saved = comicBookRepository.save(comicBook);
+        List<ComicBookAuthor> linkedAuthors = comicBook.getAuthors().stream().map(a -> {
+            Author author = a.id() == null
+                    ? authorRepository.save(new Author(null, a.firstname(), a.lastname(), a.middleName()))
+                    : authorRepository.findById(a.id())
+                            .orElseThrow(() -> new NoSuchElementException("Author not found: " + a.id()));
+            comicBookRepository.linkAuthor(saved.getId(), author.id(), a.role());
+            return ComicBookAuthor.builder()
+                    .id(author.id())
+                    .firstname(author.firstname())
+                    .lastname(author.lastname())
+                    .middleName(author.middlename())
+                    .role(a.role())
+                    .build();
+        }).toList();
+        return saved.toBuilder().authors(linkedAuthors).build();
     }
 
     @Override
@@ -43,20 +58,10 @@ public class ComicBookService implements CreateComicBookUseCase, GetComicBookUse
     @Override
     public ComicBook updateComicBook(UUID id, ComicBook update) {
         ComicBook existing = getComicBookById(id);
-        List<ComicBookAuthor> authors = update.getAuthors().stream()
-                .map(a -> ComicBookAuthor.builder()
-                        .id(UUID.randomUUID())
-                        .firstname(a.firstname())
-                        .lastname(a.lastname())
-                        .middleName(a.middleName())
-                        .role(a.role())
-                        .build())
-                .toList();
         return comicBookRepository.save(existing.toBuilder()
                 .title(update.getTitle())
                 .isbn(update.getIsbn())
                 .date(update.getDate())
-                .authors(authors)
                 .build());
     }
 

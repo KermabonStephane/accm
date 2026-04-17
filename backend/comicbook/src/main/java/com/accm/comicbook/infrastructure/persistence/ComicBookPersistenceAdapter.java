@@ -17,22 +17,29 @@ class ComicBookPersistenceAdapter implements ComicBookRepositoryPort {
     private final ComicBookJpaRepository repository;
     private final ComicBookAuthorJpaRepository comicBookAuthorRepository;
     private final AuthorJpaRepository authorRepository;
+    private final ComicBookEntityMapper mapper;
 
     @Override
     public ComicBook save(ComicBook comicBook) {
-        return ComicBookEntityMapper.toDomain(
-                repository.save(ComicBookEntityMapper.toEntity(comicBook)));
+        ComicBookJpaEntity entity = repository.findById(comicBook.getId())
+                .orElseGet(ComicBookJpaEntity::new);
+        entity.setId(comicBook.getId());
+        entity.setTitle(comicBook.getTitle());
+        entity.setIsbn(comicBook.getIsbn());
+        entity.setDate(comicBook.getDate());
+        entity.setStatus(comicBook.getStatus());
+        return mapper.toDomain(repository.save(entity));
     }
 
     @Override
     public Optional<ComicBook> findById(UUID id) {
-        return repository.findById(id).map(ComicBookEntityMapper::toDomain);
+        return repository.findById(id).map(mapper::toDomain);
     }
 
     @Override
     public List<ComicBook> findAll() {
         return repository.findAll().stream()
-                .map(ComicBookEntityMapper::toDomain)
+                .map(mapper::toDomain)
                 .toList();
     }
 
@@ -48,8 +55,6 @@ class ComicBookPersistenceAdapter implements ComicBookRepositoryPort {
 
     @Override
     public void unlinkAuthor(UUID comicBookId, UUID authorId, AuthorRole role) {
-        comicBookAuthorRepository
-                .findByComicBookIdAndAuthorIdAndRole(comicBookId, authorId, role)
-                .ifPresent(comicBookAuthorRepository::delete);
+        comicBookAuthorRepository.deleteByComicBookIdAndAuthorIdAndRole(comicBookId, authorId, role);
     }
 }

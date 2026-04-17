@@ -1,5 +1,6 @@
 package com.accm.comicbook.infrastructure.web;
 
+import com.accm.comicbook.domain.model.AuthorRole;
 import com.accm.comicbook.domain.model.ComicBook;
 import com.accm.comicbook.domain.model.ComicBookAuthor;
 import com.accm.comicbook.domain.model.ComicBookStatus;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/comicBooks")
+@RequestMapping("/api/v1/comicbooks")
 @RequiredArgsConstructor
 @Tag(name = "ComicBooks", description = "ComicBook collection management API")
 class ComicBookController {
@@ -32,47 +33,39 @@ class ComicBookController {
     private final ListComicBookAuthorsUseCase listComicBookAuthorsUseCase;
     private final AddComicBookAuthorUseCase addComicBookAuthorUseCase;
     private final RemoveComicBookAuthorUseCase removeComicBookAuthorUseCase;
+    private final ComicBookWebMapper webMapper;
 
     @GetMapping
     @Operation(summary = "List all comicBooks")
     ResponseEntity<List<ComicBookDto>> listComicBooks() {
         return ResponseEntity.ok(
-                listComicBooksUseCase.listComicBooks().stream().map(ComicBookDto::from).toList()
+                listComicBooksUseCase.listComicBooks().stream().map(webMapper::toDto).toList()
         );
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a comicBook by ID")
     ResponseEntity<ComicBookDto> getComicBook(@PathVariable UUID id) {
-        return ResponseEntity.ok(ComicBookDto.from(getComicBookUseCase.getComicBookById(id)));
+        return ResponseEntity.ok(webMapper.toDto(getComicBookUseCase.getComicBookById(id)));
     }
 
     @PostMapping
     @Operation(summary = "Create a new comicBook")
     ResponseEntity<ComicBookDto> createComicBook(@RequestBody @Valid ComicBookDto request) {
-        ComicBook comicBook = ComicBook.builder()
+        ComicBook comicBook = webMapper.toDomain(request).toBuilder()
                 .id(UUID.randomUUID())
-                .title(request.title())
-                .isbn(request.isbn())
-                .date(request.date())
                 .status(ComicBookStatus.ACTIVE)
-                .authors(toAuthorDomain(request))
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ComicBookDto.from(createComicBookUseCase.createComicBook(comicBook)));
+                .body(webMapper.toDto(createComicBookUseCase.createComicBook(comicBook)));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a comicBook")
     ResponseEntity<ComicBookDto> updateComicBook(@PathVariable UUID id,
                                                  @RequestBody @Valid ComicBookDto request) {
-        ComicBook update = ComicBook.builder()
-                .title(request.title())
-                .isbn(request.isbn())
-                .date(request.date())
-                .authors(toAuthorDomain(request))
-                .build();
-        return ResponseEntity.ok(ComicBookDto.from(updateComicBookUseCase.updateComicBook(id, update)));
+        return ResponseEntity.ok(
+                webMapper.toDto(updateComicBookUseCase.updateComicBook(id, webMapper.toDomain(request))));
     }
 
     @DeleteMapping("/{id}")
@@ -87,7 +80,7 @@ class ComicBookController {
     ResponseEntity<List<AuthorDto>> listAuthors(@PathVariable UUID comicBookId) {
         return ResponseEntity.ok(
                 listComicBookAuthorsUseCase.listAuthors(comicBookId).stream()
-                        .map(AuthorDto::from)
+                        .map(webMapper::toDto)
                         .toList()
         );
     }
@@ -97,7 +90,7 @@ class ComicBookController {
     ResponseEntity<AuthorDto> addAuthor(@PathVariable UUID comicBookId,
                                         @RequestBody @Valid ComicBookAuthorRequest request) {
         ComicBookAuthor author = addComicBookAuthorUseCase.addAuthor(comicBookId, request.authorId(), request.role());
-        return ResponseEntity.status(HttpStatus.CREATED).body(AuthorDto.from(author));
+        return ResponseEntity.status(HttpStatus.CREATED).body(webMapper.toDto(author));
     }
 
     @DeleteMapping("/{comicBookId}/authors/{authorId}/roles/{role}")
@@ -105,22 +98,7 @@ class ComicBookController {
     @Operation(summary = "Remove an author role from a comicBook")
     void removeAuthor(@PathVariable UUID comicBookId,
                       @PathVariable UUID authorId,
-                      @PathVariable com.accm.comicbook.domain.model.AuthorRole role) {
+                      @PathVariable AuthorRole role) {
         removeComicBookAuthorUseCase.removeAuthor(comicBookId, authorId, role);
-    }
-
-    private static List<ComicBookAuthor> toAuthorDomain(ComicBookDto request) {
-        if (request.authors() == null) {
-            return List.of();
-        }
-        return request.authors().stream()
-                .map(a -> ComicBookAuthor.builder()
-                        .id(UUID.randomUUID())
-                        .firstname(a.firstname())
-                        .lastname(a.lastname())
-                        .middleName(a.middlename())
-                        .role(a.role())
-                        .build())
-                .toList();
     }
 }

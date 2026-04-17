@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "comicBook_author")
+@Table(name = "comicbook_author")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,7 +19,7 @@ class ComicBookAuthorJpaEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comicBook_id", nullable = false)
+    @JoinColumn(name = "comicbook_id", nullable = false)
     private ComicBookJpaEntity comicBook;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

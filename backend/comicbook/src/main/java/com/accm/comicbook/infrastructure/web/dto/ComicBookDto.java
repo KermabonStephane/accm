@@ -1,8 +1,6 @@
 package com.accm.comicbook.infrastructure.web.dto;
 
 import com.accm.comicbook.domain.model.AuthorRole;
-import com.accm.comicbook.domain.model.ComicBook;
-import com.accm.comicbook.domain.model.ComicBookAuthor;
 import com.accm.comicbook.domain.model.ComicBookStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -28,25 +26,11 @@ public record ComicBookDto(
             String middlename,
             @NotNull AuthorRole role
     ) {
-        public static AuthorDto from(ComicBookAuthor author) {
-            return new AuthorDto(author.id(), author.firstname(), author.lastname(), author.middleName(), author.role());
-        }
     }
 
     public record ComicBookAuthorRequest(
             @NotNull UUID authorId,
             @NotNull AuthorRole role
     ) {
-    }
-
-    public static ComicBookDto from(ComicBook comicBook) {
-        return new ComicBookDto(
-                comicBook.getId(),
-                comicBook.getTitle(),
-                comicBook.getIsbn(),
-                comicBook.getDate(),
-                comicBook.getStatus(),
-                comicBook.getAuthors().stream().map(AuthorDto::from).toList()
-        );
     }
 }

@@ -13,9 +13,20 @@ import java.util.UUID;
 class AuthorPersistenceAdapter implements AuthorRepositoryPort {
 
     private final AuthorJpaRepository repository;
+    private final ComicBookEntityMapper mapper;
+
+    @Override
+    public Author save(Author author) {
+        AuthorJpaEntity entity = new AuthorJpaEntity();
+        entity.setId(author.id() != null ? author.id() : UUID.randomUUID());
+        entity.setFirstname(author.firstname());
+        entity.setLastname(author.lastname());
+        entity.setMiddlename(author.middlename());
+        return mapper.toAuthorModel(repository.save(entity));
+    }
 
     @Override
     public Optional<Author> findById(UUID id) {
-        return repository.findById(id).map(ComicBookEntityMapper::toAuthorModel);
+        return repository.findById(id).map(mapper::toAuthorModel);
     }
 }

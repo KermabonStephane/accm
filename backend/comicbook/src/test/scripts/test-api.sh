@@ -8,7 +8,7 @@
 set -euo pipefail
 
 BASE_URL="${1:-http://localhost:8080}"
-API="$BASE_URL/api/v1/comicBooks"
+API="$BASE_URL/api/v1/comicbooks"
 
 # ── colours ────────────────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
