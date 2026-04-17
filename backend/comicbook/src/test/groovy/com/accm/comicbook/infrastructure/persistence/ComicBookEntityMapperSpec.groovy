@@ -1,6 +1,8 @@
 package com.accm.comicbook.infrastructure.persistence
 
+import com.accm.comicbook.domain.model.Author
 import com.accm.comicbook.domain.model.AuthorRole
+import com.accm.comicbook.domain.model.ComicBook
 import com.accm.comicbook.domain.model.ComicBookStatus
 import spock.lang.Specification
 import spock.lang.Subject
@@ -59,5 +61,64 @@ class ComicBookEntityMapperSpec extends Specification {
         result.authors[0].firstname == "Dave"
         result.authors[0].lastname == "Gibbons"
         result.authors[0].role == AuthorRole.ARTIST
+    }
+
+    def "toEntity(Author) maps all fields"() {
+        given:
+        def author = new Author(UUID.randomUUID(), "Alan", "Moore", "Oswald")
+
+        when:
+        def entity = mapper.toEntity(author)
+
+        then:
+        entity.id == author.id()
+        entity.firstname == "Alan"
+        entity.lastname == "Moore"
+        entity.middlename == "Oswald"
+    }
+
+    def "updateEntity applies scalar fields to existing entity without touching authors"() {
+        given:
+        def entity = new ComicBookJpaEntity()
+        entity.id = UUID.randomUUID()
+        entity.title = "Old Title"
+        entity.authors = [new ComicBookAuthorJpaEntity()]
+
+        def comicBook = ComicBook.builder()
+                .id(entity.id)
+                .title("Watchmen")
+                .isbn("978-1-4012-0713-1")
+                .date(java.time.LocalDate.of(1987, 9, 1))
+                .status(ComicBookStatus.ACTIVE)
+                .build()
+
+        when:
+        mapper.updateEntity(entity, comicBook)
+
+        then:
+        entity.id == comicBook.id()
+        entity.title == "Watchmen"
+        entity.isbn == "978-1-4012-0713-1"
+        entity.date == java.time.LocalDate.of(1987, 9, 1)
+        entity.status == ComicBookStatus.ACTIVE
+        entity.authors.size() == 1
+    }
+
+    def "toEntity(ComicBookJpaEntity, AuthorJpaEntity, AuthorRole) maps all fields with generated id"() {
+        given:
+        def comicBookEntity = new ComicBookJpaEntity()
+        comicBookEntity.id = UUID.randomUUID()
+
+        def authorEntity = new AuthorJpaEntity()
+        authorEntity.id = UUID.randomUUID()
+
+        when:
+        def result = mapper.toEntity(comicBookEntity, authorEntity, AuthorRole.WRITER)
+
+        then:
+        result.id != null
+        result.comicBook == comicBookEntity
+        result.author == authorEntity
+        result.role == AuthorRole.WRITER
     }
 }

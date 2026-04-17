@@ -21,23 +21,18 @@ public class ComicBookService implements CreateComicBookUseCase, GetComicBookUse
 
     private final ComicBookRepositoryPort comicBookRepository;
     private final AuthorRepositoryPort authorRepository;
+    private final ComicBookMapper mapper;
 
     @Override
     public ComicBook createComicBook(ComicBook comicBook) {
         ComicBook saved = comicBookRepository.save(comicBook);
-        List<ComicBookAuthor> linkedAuthors = comicBook.getAuthors().stream().map(a -> {
+        List<ComicBookAuthor> linkedAuthors = comicBook.authors().stream().map(a -> {
             Author author = a.id() == null
                     ? authorRepository.save(new Author(null, a.firstname(), a.lastname(), a.middleName()))
                     : authorRepository.findById(a.id())
                             .orElseThrow(() -> new NoSuchElementException("Author not found: " + a.id()));
-            comicBookRepository.linkAuthor(saved.getId(), author.id(), a.role());
-            return ComicBookAuthor.builder()
-                    .id(author.id())
-                    .firstname(author.firstname())
-                    .lastname(author.lastname())
-                    .middleName(author.middlename())
-                    .role(a.role())
-                    .build();
+            comicBookRepository.linkAuthor(saved.id(), author.id(), a.role());
+            return mapper.toComicBookAuthor(author, a.role());
         }).toList();
         return saved.toBuilder().authors(linkedAuthors).build();
     }
@@ -58,25 +53,19 @@ public class ComicBookService implements CreateComicBookUseCase, GetComicBookUse
     @Override
     public ComicBook updateComicBook(UUID id, ComicBook update) {
         ComicBook existing = getComicBookById(id);
-        return comicBookRepository.save(existing.toBuilder()
-                .title(update.getTitle())
-                .isbn(update.getIsbn())
-                .date(update.getDate())
-                .build());
+        return comicBookRepository.save(mapper.applyUpdate(existing, update));
     }
 
     @Override
     public void deleteComicBook(UUID id) {
         ComicBook existing = getComicBookById(id);
-        comicBookRepository.save(existing.toBuilder()
-                .status(ComicBookStatus.DELETED)
-                .build());
+        comicBookRepository.save(existing.toBuilder().status(ComicBookStatus.DELETED).build());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ComicBookAuthor> listAuthors(UUID comicBookId) {
-        return getComicBookById(comicBookId).getAuthors();
+        return getComicBookById(comicBookId).authors();
     }
 
     @Override
@@ -85,28 +74,21 @@ public class ComicBookService implements CreateComicBookUseCase, GetComicBookUse
         Author author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new NoSuchElementException("Author not found: " + authorId));
 
-        boolean alreadyLinked = comicBook.getAuthors().stream()
+        boolean alreadyLinked = comicBook.authors().stream()
                 .anyMatch(a -> a.id().equals(authorId) && a.role() == role);
         if (alreadyLinked) {
             throw new IllegalStateException("Author already has role " + role + " on this comicBook");
         }
 
         comicBookRepository.linkAuthor(comicBookId, authorId, role);
-
-        return ComicBookAuthor.builder()
-                .id(author.id())
-                .firstname(author.firstname())
-                .lastname(author.lastname())
-                .middleName(author.middlename())
-                .role(role)
-                .build();
+        return mapper.toComicBookAuthor(author, role);
     }
 
     @Override
     public void removeAuthor(UUID comicBookId, UUID authorId, AuthorRole role) {
         ComicBook comicBook = getComicBookById(comicBookId);
 
-        boolean exists = comicBook.getAuthors().stream()
+        boolean exists = comicBook.authors().stream()
                 .anyMatch(a -> a.id().equals(authorId) && a.role() == role);
         if (!exists) {
             throw new NoSuchElementException("Author with role " + role + " not found on this comicBook");

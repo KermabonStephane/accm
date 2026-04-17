@@ -13,7 +13,7 @@ class ComicBookAuthorServiceSpec extends Specification {
 
     ComicBookRepositoryPort comicBookRepository = Mock()
     AuthorRepositoryPort authorRepository = Mock()
-    ComicBookService service = new ComicBookService(comicBookRepository, authorRepository)
+    ComicBookService service = new ComicBookService(comicBookRepository, authorRepository, new ComicBookMapperImpl())
 
     def comicBookId = UUID.randomUUID()
     def authorId = UUID.randomUUID()
