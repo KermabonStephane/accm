@@ -13,10 +13,14 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-class ComicbookAuthorJpaEntity {
+class ComicBookAuthorJpaEntity {
 
     @Id
     private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comicbook_id", nullable = false)
+    private ComicBookJpaEntity comicBook;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "author_id")

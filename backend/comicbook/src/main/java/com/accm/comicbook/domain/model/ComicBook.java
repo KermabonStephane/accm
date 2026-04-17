@@ -11,12 +11,12 @@ import java.util.UUID;
 @Getter
 @Builder(toBuilder = true)
 @AllArgsConstructor
-public class Comicbook {
+public class ComicBook {
     private final UUID id;
     private final String title;
     private final String isbn;
     private final LocalDate date;
-    private final ComicbookStatus status;
+    private final ComicBookStatus status;
     @Builder.Default
-    private final List<ComicbookAuthor> authors = List.of();
+    private final List<ComicBookAuthor> authors = List.of();
 }

@@ -1,5 +1,5 @@
 package com.accm.comicbook.domain.model;
 
-public enum ComicbookStatus {
+public enum ComicBookStatus {
     ACTIVE, DELETED
 }
