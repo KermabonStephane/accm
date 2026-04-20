@@ -12,4 +12,6 @@ interface ComicBookAuthorJpaRepository extends JpaRepository<ComicBookAuthorJpaE
     @Modifying
     @Query("DELETE FROM ComicBookAuthorJpaEntity a WHERE a.comicBook.id = :comicBookId AND a.author.id = :authorId AND a.role = :role")
     void deleteByComicBookIdAndAuthorIdAndRole(UUID comicBookId, UUID authorId, AuthorRole role);
+
+    boolean existsByAuthorId(UUID authorId);
 }

@@ -52,4 +52,9 @@ class ComicBookPersistenceAdapter implements ComicBookRepositoryPort {
     public void unlinkAuthor(UUID comicBookId, UUID authorId, AuthorRole role) {
         comicBookAuthorRepository.deleteByComicBookIdAndAuthorIdAndRole(comicBookId, authorId, role);
     }
+
+    @Override
+    public List<ComicBook> findByAuthorId(UUID authorId) {
+        return repository.findByAuthorId(authorId).stream().map(mapper::toDomain).toList();
+    }
 }
