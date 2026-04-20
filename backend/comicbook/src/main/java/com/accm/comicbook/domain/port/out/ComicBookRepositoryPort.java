@@ -15,4 +15,5 @@ public interface ComicBookRepositoryPort {
     void unlinkAuthor(UUID comicBookId, UUID authorId, AuthorRole role);
     List<ComicBook> findByAuthorId(UUID authorId);
     List<ComicBook> findBySeriesId(UUID seriesId);
+    boolean existsBySeriesIssueVolume(UUID seriesId, Integer issueNumber, Integer volumeNumber, UUID excludeId);
 }

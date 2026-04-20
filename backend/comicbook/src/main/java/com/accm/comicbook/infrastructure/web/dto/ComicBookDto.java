@@ -17,6 +17,8 @@ public record ComicBookDto(
         LocalDate date,
         ComicBookStatus status,
         UUID seriesId,
+        Integer issueNumber,
+        Integer volumeNumber,
         @Valid List<AuthorDto> authors
 ) {
 

@@ -131,4 +131,46 @@ class ComicBookAuthorServiceSpec extends Specification {
         then:
         thrown(NoSuchElementException)
     }
+
+    def "createComicBook throws when issue/volume already exists in the same series"() {
+        given:
+        def seriesId = UUID.randomUUID()
+        def request = ComicBook.builder().title("Watchmen #1").seriesId(seriesId).issueNumber(1).volumeNumber(1).build()
+        comicBookRepository.existsBySeriesIssueVolume(seriesId, 1, 1, null) >> true
+
+        when:
+        service.createComicBook(request)
+
+        then:
+        thrown(IllegalStateException)
+        0 * comicBookRepository.save(_)
+    }
+
+    def "createComicBook skips uniqueness check when seriesId is null"() {
+        given:
+        def request = ComicBook.builder().title("Watchmen #1").issueNumber(1).volumeNumber(1).build()
+        comicBookRepository.save(_) >> comicBook
+
+        when:
+        service.createComicBook(request)
+
+        then:
+        0 * comicBookRepository.existsBySeriesIssueVolume(_, _, _, _)
+    }
+
+    def "updateComicBook throws when issue/volume already exists in another comicBook in the series"() {
+        given:
+        def seriesId = UUID.randomUUID()
+        def existing = comicBook.toBuilder().seriesId(seriesId).issueNumber(1).volumeNumber(1).build()
+        def update = ComicBook.builder().title("Watchmen #1").seriesId(seriesId).issueNumber(1).volumeNumber(1).build()
+        comicBookRepository.findById(comicBookId) >> Optional.of(existing)
+        comicBookRepository.existsBySeriesIssueVolume(seriesId, 1, 1, comicBookId) >> true
+
+        when:
+        service.updateComicBook(comicBookId, update)
+
+        then:
+        thrown(IllegalStateException)
+        0 * comicBookRepository.save(_)
+    }
 }

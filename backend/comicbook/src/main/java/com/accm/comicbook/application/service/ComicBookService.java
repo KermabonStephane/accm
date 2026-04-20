@@ -23,8 +23,18 @@ public class ComicBookService implements CreateComicBookUseCase, GetComicBookUse
     private final AuthorRepositoryPort authorRepository;
     private final ComicBookMapper mapper;
 
+    private void validateIssueVolumeUniqueness(ComicBook comicBook, UUID excludeId) {
+        if (comicBook.seriesId() != null && comicBook.issueNumber() != null && comicBook.volumeNumber() != null) {
+            if (comicBookRepository.existsBySeriesIssueVolume(comicBook.seriesId(), comicBook.issueNumber(), comicBook.volumeNumber(), excludeId)) {
+                throw new IllegalStateException(
+                        "A comicbook with issue " + comicBook.issueNumber() + " volume " + comicBook.volumeNumber() + " already exists in this series");
+            }
+        }
+    }
+
     @Override
     public ComicBook createComicBook(ComicBook comicBook) {
+        validateIssueVolumeUniqueness(comicBook, null);
         ComicBook saved = comicBookRepository.save(comicBook);
         List<ComicBookAuthor> linkedAuthors = comicBook.authors().stream().map(a -> {
             Author author = a.id() == null
@@ -53,7 +63,9 @@ public class ComicBookService implements CreateComicBookUseCase, GetComicBookUse
     @Override
     public ComicBook updateComicBook(UUID id, ComicBook update) {
         ComicBook existing = getComicBookById(id);
-        return comicBookRepository.save(mapper.applyUpdate(existing, update));
+        ComicBook merged = mapper.applyUpdate(existing, update);
+        validateIssueVolumeUniqueness(merged, id);
+        return comicBookRepository.save(merged);
     }
 
     @Override
