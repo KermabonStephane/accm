@@ -14,4 +14,5 @@ public interface ComicBookRepositoryPort {
     void linkAuthor(UUID comicBookId, UUID authorId, AuthorRole role);
     void unlinkAuthor(UUID comicBookId, UUID authorId, AuthorRole role);
     List<ComicBook> findByAuthorId(UUID authorId);
+    List<ComicBook> findBySeriesId(UUID seriesId);
 }

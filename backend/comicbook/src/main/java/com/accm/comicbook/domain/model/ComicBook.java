@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Builder(toBuilder = true)
 public record ComicBook(UUID id, String title, String isbn, LocalDate date, ComicBookStatus status,
-                        List<ComicBookAuthor> authors) {
+                        UUID seriesId, List<ComicBookAuthor> authors) {
 
     public ComicBook {
         authors = authors != null ? authors : List.of();

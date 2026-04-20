@@ -10,4 +10,6 @@ interface ComicBookJpaRepository extends JpaRepository<ComicBookJpaEntity, UUID>
 
     @Query("SELECT DISTINCT c FROM ComicBookJpaEntity c JOIN c.authors a WHERE a.author.id = :authorId")
     List<ComicBookJpaEntity> findByAuthorId(UUID authorId);
+
+    List<ComicBookJpaEntity> findBySeries_Id(UUID seriesId);
 }

@@ -39,6 +39,10 @@ class ComicBookJpaEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "series_id")
+    private SeriesJpaEntity series;
+
     @OneToMany(mappedBy = "comicBook", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ComicBookAuthorJpaEntity> authors = new ArrayList<>();
 }
