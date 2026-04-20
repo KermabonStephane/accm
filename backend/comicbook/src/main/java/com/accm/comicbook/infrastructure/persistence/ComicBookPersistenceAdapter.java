@@ -68,4 +68,9 @@ class ComicBookPersistenceAdapter implements ComicBookRepositoryPort {
     public List<ComicBook> findBySeriesId(UUID seriesId) {
         return repository.findBySeries_Id(seriesId).stream().map(mapper::toDomain).toList();
     }
+
+    @Override
+    public boolean existsBySeriesIssueVolume(UUID seriesId, Integer issueNumber, Integer volumeNumber, UUID excludeId) {
+        return repository.existsBySeriesIssueVolume(seriesId, issueNumber, volumeNumber, excludeId);
+    }
 }

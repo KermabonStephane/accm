@@ -33,6 +33,10 @@ class ComicBookJpaEntity {
     @Enumerated(EnumType.STRING)
     private ComicBookStatus status;
 
+    private Integer issueNumber;
+
+    private Integer volumeNumber;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

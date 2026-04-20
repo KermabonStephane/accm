@@ -12,4 +12,7 @@ interface ComicBookJpaRepository extends JpaRepository<ComicBookJpaEntity, UUID>
     List<ComicBookJpaEntity> findByAuthorId(UUID authorId);
 
     List<ComicBookJpaEntity> findBySeries_Id(UUID seriesId);
+
+    @Query("SELECT COUNT(c) > 0 FROM ComicBookJpaEntity c WHERE c.series.id = :seriesId AND c.issueNumber = :issueNumber AND c.volumeNumber = :volumeNumber AND (:excludeId IS NULL OR c.id <> :excludeId)")
+    boolean existsBySeriesIssueVolume(UUID seriesId, Integer issueNumber, Integer volumeNumber, UUID excludeId);
 }
