@@ -73,6 +73,7 @@ class ComicBookWebMapperSpec extends Specification {
                 "978-1-4012-0713-1",
                 LocalDate.of(1987, 9, 1),
                 ComicBookStatus.DELETED,
+                null,
                 []
         )
 
@@ -91,7 +92,7 @@ class ComicBookWebMapperSpec extends Specification {
     def "toDomain(ComicBookDto) maps authors list including middlename → middleName"() {
         given:
         def authorDto = new ComicBookDto.AuthorDto(null, "Alan", "Moore", "Oswald", AuthorRole.WRITER)
-        def dto = new ComicBookDto(null, "Watchmen", null, null, null, [authorDto])
+        def dto = new ComicBookDto(null, "Watchmen", null, null, null, null, [authorDto])
 
         when:
         def comicBook = mapper.toDomain(dto)

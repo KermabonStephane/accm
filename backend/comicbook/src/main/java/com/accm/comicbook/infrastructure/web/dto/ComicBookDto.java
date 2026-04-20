@@ -16,6 +16,7 @@ public record ComicBookDto(
         String isbn,
         LocalDate date,
         ComicBookStatus status,
+        UUID seriesId,
         @Valid List<AuthorDto> authors
 ) {
 
