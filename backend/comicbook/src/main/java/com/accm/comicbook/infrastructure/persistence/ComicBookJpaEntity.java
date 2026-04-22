@@ -47,6 +47,10 @@ class ComicBookJpaEntity {
     @JoinColumn(name = "series_id")
     private SeriesJpaEntity series;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "editor_id")
+    private EditorJpaEntity editor;
+
     @OneToMany(mappedBy = "comicBook", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ComicBookAuthorJpaEntity> authors = new ArrayList<>();
 }

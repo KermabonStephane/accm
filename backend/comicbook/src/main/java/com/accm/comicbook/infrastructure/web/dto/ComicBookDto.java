@@ -19,6 +19,7 @@ public record ComicBookDto(
         UUID seriesId,
         Integer issueNumber,
         Integer volumeNumber,
+        UUID editorId,
         @Valid List<AuthorDto> authors
 ) {
 

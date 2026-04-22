@@ -26,5 +26,6 @@ interface ComicBookMapper {
     @Mapping(target = "seriesId", source = "update.seriesId")
     @Mapping(target = "issueNumber", source = "update.issueNumber")
     @Mapping(target = "volumeNumber", source = "update.volumeNumber")
+    @Mapping(target = "editorId", source = "update.editorId")
     ComicBook applyUpdate(ComicBook existing, ComicBook update);
 }

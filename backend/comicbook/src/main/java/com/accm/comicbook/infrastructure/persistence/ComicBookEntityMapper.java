@@ -4,6 +4,7 @@ import com.accm.comicbook.domain.model.AuthorRole;
 import com.accm.comicbook.domain.model.Author;
 import com.accm.comicbook.domain.model.ComicBook;
 import com.accm.comicbook.domain.model.ComicBookAuthor;
+import com.accm.comicbook.domain.model.Editor;
 import com.accm.comicbook.domain.model.Series;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,6 +14,7 @@ import org.mapstruct.MappingTarget;
 interface ComicBookEntityMapper {
 
     @Mapping(target = "seriesId", source = "series.id")
+    @Mapping(target = "editorId", source = "editor.id")
     ComicBook toDomain(ComicBookJpaEntity entity);
 
     @Mapping(target = "id", source = "author.id")
@@ -27,6 +29,7 @@ interface ComicBookEntityMapper {
 
     @Mapping(target = "authors", ignore = true)
     @Mapping(target = "series", ignore = true)
+    @Mapping(target = "editor", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateEntity(@MappingTarget ComicBookJpaEntity entity, ComicBook comicBook);
@@ -40,4 +43,9 @@ interface ComicBookEntityMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "parent", ignore = true)
     void updateEntity(@MappingTarget SeriesJpaEntity entity, Series series);
+
+    Editor toDomain(EditorJpaEntity entity);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntity(@MappingTarget EditorJpaEntity entity, Editor editor);
 }
