@@ -18,6 +18,7 @@ class ComicBookPersistenceAdapter implements ComicBookRepositoryPort {
     private final ComicBookAuthorJpaRepository comicBookAuthorRepository;
     private final AuthorJpaRepository authorRepository;
     private final SeriesJpaRepository seriesRepository;
+    private final EditorJpaRepository editorRepository;
     private final ComicBookEntityMapper mapper;
 
     @Override
@@ -25,11 +26,8 @@ class ComicBookPersistenceAdapter implements ComicBookRepositoryPort {
         ComicBookJpaEntity entity = repository.findById(comicBook.id())
                 .orElseGet(ComicBookJpaEntity::new);
         mapper.updateEntity(entity, comicBook);
-        if (comicBook.seriesId() != null) {
-            entity.setSeries(seriesRepository.getReferenceById(comicBook.seriesId()));
-        } else {
-            entity.setSeries(null);
-        }
+        entity.setSeries(comicBook.seriesId() != null ? seriesRepository.getReferenceById(comicBook.seriesId()) : null);
+        entity.setEditor(comicBook.editorId() != null ? editorRepository.getReferenceById(comicBook.editorId()) : null);
         return mapper.toDomain(repository.save(entity));
     }
 
