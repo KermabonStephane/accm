@@ -10,7 +10,7 @@ class CountryServiceSpec extends Specification {
     CountryService service = new CountryService(countryRepository)
 
     def countryCode = 250
-    def country = Country.builder().countryCode(countryCode).name("France").alpha2("FR").alpha3("FRA").build()
+    def country = Country.builder().countryCode(countryCode).name("France").alpha2("FR").alpha3("FRA").regionCode(150).subRegionCode(155).build()
 
     def "createCountry saves and returns the country"() {
         given:
@@ -61,19 +61,21 @@ class CountryServiceSpec extends Specification {
         result[0].name() == "France"
     }
 
-    def "updateCountry updates name, alpha2, alpha3"() {
+    def "updateCountry updates all fields"() {
         given:
         countryRepository.findByCountryCode(countryCode) >> Optional.of(country)
         countryRepository.save(_) >> { Country c -> c }
 
         when:
-        def result = service.updateCountry(countryCode, Country.builder().name("Germany").alpha2("DE").alpha3("DEU").countryCode(276).build())
+        def result = service.updateCountry(countryCode, Country.builder().name("Germany").alpha2("DE").alpha3("DEU").countryCode(countryCode).regionCode(19).subRegionCode(150).build())
 
         then:
         result.countryCode() == countryCode
         result.name() == "Germany"
         result.alpha2() == "DE"
         result.alpha3() == "DEU"
+        result.regionCode() == 19
+        result.subRegionCode() == 150
     }
 
     def "updateCountry throws when not found"() {

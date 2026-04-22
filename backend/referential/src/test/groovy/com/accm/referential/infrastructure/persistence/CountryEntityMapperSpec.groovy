@@ -9,7 +9,36 @@ class CountryEntityMapperSpec extends Specification {
     @Subject
     def mapper = new CountryEntityMapperImpl()
 
-    def "toDomain maps all fields"() {
+    def "toDomain maps scalar fields and resolves regionCode and subRegionCode from relations"() {
+        given:
+        def regionEntity = new RegionJpaEntity()
+        regionEntity.code = 2
+
+        def subRegionEntity = new SubRegionJpaEntity()
+        subRegionEntity.code = 14
+        subRegionEntity.region = regionEntity
+
+        def entity = new CountryJpaEntity()
+        entity.countryCode = 250
+        entity.name = "France"
+        entity.alpha2 = "FR"
+        entity.alpha3 = "FRA"
+        entity.region = regionEntity
+        entity.subRegion = subRegionEntity
+
+        when:
+        def country = mapper.toDomain(entity)
+
+        then:
+        country.countryCode() == 250
+        country.name() == "France"
+        country.alpha2() == "FR"
+        country.alpha3() == "FRA"
+        country.regionCode() == 2
+        country.subRegionCode() == 14
+    }
+
+    def "toDomain maps null region and subRegion to null codes"() {
         given:
         def entity = new CountryJpaEntity()
         entity.countryCode = 250
@@ -21,21 +50,20 @@ class CountryEntityMapperSpec extends Specification {
         def country = mapper.toDomain(entity)
 
         then:
-        country.countryCode() == 250
-        country.name() == "France"
-        country.alpha2() == "FR"
-        country.alpha3() == "FRA"
+        country.regionCode() == null
+        country.subRegionCode() == null
     }
 
-    def "updateEntity applies all fields"() {
+    def "updateEntity applies scalar fields and ignores region and subRegion"() {
         given:
         def entity = new CountryJpaEntity()
-
         def country = Country.builder()
                 .countryCode(276)
                 .name("Germany")
                 .alpha2("DE")
                 .alpha3("DEU")
+                .regionCode(150)
+                .subRegionCode(155)
                 .build()
 
         when:
@@ -46,5 +74,7 @@ class CountryEntityMapperSpec extends Specification {
         entity.name == "Germany"
         entity.alpha2 == "DE"
         entity.alpha3 == "DEU"
+        entity.region == null
+        entity.subRegion == null
     }
 }
