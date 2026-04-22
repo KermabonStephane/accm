@@ -21,7 +21,6 @@ class ComicBookJpaRepositorySpec extends Specification {
         def entity = new ComicBookJpaEntity()
         entity.id = UUID.randomUUID()
         entity.title = "Watchmen"
-        entity.isbn = "978-1-4012-0713-1"
         entity.date = LocalDate.of(1987, 9, 1)
         entity.status = ComicBookStatus.ACTIVE
         repository.save(entity)

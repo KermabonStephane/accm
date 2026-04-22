@@ -26,8 +26,6 @@ class ComicBookJpaEntity {
 
     private String title;
 
-    private String isbn;
-
     private LocalDate date;
 
     @Enumerated(EnumType.STRING)

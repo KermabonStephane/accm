@@ -17,7 +17,6 @@ class ComicBookEntityMapperSpec extends Specification {
         def entity = new ComicBookJpaEntity()
         entity.id = UUID.randomUUID()
         entity.title = "Watchmen"
-        entity.isbn = "978-1-4012-0713-1"
         entity.date = java.time.LocalDate.of(1987, 9, 1)
         entity.status = ComicBookStatus.ACTIVE
         entity.authors = []
@@ -28,7 +27,6 @@ class ComicBookEntityMapperSpec extends Specification {
         then:
         comicBook.id == entity.id
         comicBook.title == "Watchmen"
-        comicBook.isbn == "978-1-4012-0713-1"
         comicBook.date == java.time.LocalDate.of(1987, 9, 1)
         comicBook.status == ComicBookStatus.ACTIVE
         comicBook.authors.isEmpty()
@@ -87,7 +85,6 @@ class ComicBookEntityMapperSpec extends Specification {
         def comicBook = ComicBook.builder()
                 .id(entity.id)
                 .title("Watchmen")
-                .isbn("978-1-4012-0713-1")
                 .date(java.time.LocalDate.of(1987, 9, 1))
                 .status(ComicBookStatus.ACTIVE)
                 .build()
@@ -98,7 +95,6 @@ class ComicBookEntityMapperSpec extends Specification {
         then:
         entity.id == comicBook.id()
         entity.title == "Watchmen"
-        entity.isbn == "978-1-4012-0713-1"
         entity.date == java.time.LocalDate.of(1987, 9, 1)
         entity.status == ComicBookStatus.ACTIVE
         entity.authors.size() == 1

@@ -4,6 +4,7 @@ import com.accm.comicbook.domain.model.AuthorRole;
 import com.accm.comicbook.infrastructure.web.dto.ComicBookDto;
 import com.accm.comicbook.infrastructure.web.dto.ComicBookDto.AuthorDto;
 import com.accm.comicbook.infrastructure.web.dto.ComicBookDto.ComicBookAuthorRequest;
+import com.accm.comicbook.infrastructure.web.dto.EditionDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -51,4 +52,13 @@ interface ComicBookApi {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Remove an author role from a comicBook")
     void removeAuthor(@PathVariable UUID comicBookId, @PathVariable UUID authorId, @PathVariable AuthorRole role);
+
+    @PostMapping("/{comicBookId}/editions")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create an edition for a comicbook")
+    ResponseEntity<EditionDto> createEdition(@PathVariable UUID comicBookId, @RequestBody @Valid EditionDto request);
+
+    @GetMapping("/{comicBookId}/editions")
+    @Operation(summary = "List editions of a comicbook")
+    ResponseEntity<List<EditionDto>> listEditions(@PathVariable UUID comicBookId);
 }

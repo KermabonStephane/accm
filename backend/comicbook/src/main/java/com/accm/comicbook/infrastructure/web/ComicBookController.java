@@ -4,10 +4,12 @@ import com.accm.comicbook.domain.model.AuthorRole;
 import com.accm.comicbook.domain.model.ComicBook;
 import com.accm.comicbook.domain.model.ComicBookAuthor;
 import com.accm.comicbook.domain.model.ComicBookStatus;
+import com.accm.comicbook.domain.model.Edition;
 import com.accm.comicbook.domain.port.in.*;
 import com.accm.comicbook.infrastructure.web.dto.ComicBookDto;
 import com.accm.comicbook.infrastructure.web.dto.ComicBookDto.AuthorDto;
 import com.accm.comicbook.infrastructure.web.dto.ComicBookDto.ComicBookAuthorRequest;
+import com.accm.comicbook.infrastructure.web.dto.EditionDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,10 @@ class ComicBookController implements ComicBookApi {
     private final ListComicBookAuthorsUseCase listComicBookAuthorsUseCase;
     private final AddComicBookAuthorUseCase addComicBookAuthorUseCase;
     private final RemoveComicBookAuthorUseCase removeComicBookAuthorUseCase;
+    private final CreateEditionUseCase createEditionUseCase;
+    private final ListComicBookEditionsUseCase listComicBookEditionsUseCase;
     private final ComicBookWebMapper webMapper;
+    private final EditionWebMapper editionWebMapper;
 
     @Override
     public ResponseEntity<List<ComicBookDto>> listComicBooks() {
@@ -81,5 +86,18 @@ class ComicBookController implements ComicBookApi {
     @Override
     public void removeAuthor(UUID comicBookId, UUID authorId, AuthorRole role) {
         removeComicBookAuthorUseCase.removeAuthor(comicBookId, authorId, role);
+    }
+
+    @Override
+    public ResponseEntity<EditionDto> createEdition(UUID comicBookId, EditionDto request) {
+        Edition edition = editionWebMapper.toDomain(request).toBuilder().comicBookId(comicBookId).build();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(editionWebMapper.toDto(createEditionUseCase.createEdition(edition)));
+    }
+
+    @Override
+    public ResponseEntity<List<EditionDto>> listEditions(UUID comicBookId) {
+        return ResponseEntity.ok(
+                listComicBookEditionsUseCase.listEditions(comicBookId).stream().map(editionWebMapper::toDto).toList());
     }
 }

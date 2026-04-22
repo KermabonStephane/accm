@@ -13,7 +13,6 @@ import java.util.UUID;
 public record ComicBookDto(
         UUID id,
         @NotBlank String title,
-        String isbn,
         LocalDate date,
         ComicBookStatus status,
         UUID seriesId,
