@@ -9,42 +9,41 @@ class CountryServiceSpec extends Specification {
     CountryRepositoryPort countryRepository = Mock()
     CountryService service = new CountryService(countryRepository)
 
-    def countryId = UUID.randomUUID()
-    def country = Country.builder().id(countryId).name("France").alpha2("FR").alpha3("FRA").countryCode(250).build()
+    def countryCode = 250
+    def country = Country.builder().countryCode(countryCode).name("France").alpha2("FR").alpha3("FRA").build()
 
-    def "createCountry assigns id and saves"() {
+    def "createCountry saves and returns the country"() {
         given:
         countryRepository.save(_) >> { Country c -> c }
 
         when:
-        def result = service.createCountry(Country.builder().name("France").alpha2("FR").alpha3("FRA").countryCode(250).build())
+        def result = service.createCountry(Country.builder().countryCode(250).name("France").alpha2("FR").alpha3("FRA").build())
 
         then:
-        result.id() != null
+        result.countryCode() == 250
         result.name() == "France"
         result.alpha2() == "FR"
         result.alpha3() == "FRA"
-        result.countryCode() == 250
     }
 
-    def "getCountryById returns the country"() {
+    def "getCountryByCode returns the country"() {
         given:
-        countryRepository.findById(countryId) >> Optional.of(country)
+        countryRepository.findByCountryCode(countryCode) >> Optional.of(country)
 
         when:
-        def result = service.getCountryById(countryId)
+        def result = service.getCountryByCode(countryCode)
 
         then:
-        result.id() == countryId
+        result.countryCode() == countryCode
         result.name() == "France"
     }
 
-    def "getCountryById throws when not found"() {
+    def "getCountryByCode throws when not found"() {
         given:
-        countryRepository.findById(countryId) >> Optional.empty()
+        countryRepository.findByCountryCode(countryCode) >> Optional.empty()
 
         when:
-        service.getCountryById(countryId)
+        service.getCountryByCode(countryCode)
 
         then:
         thrown(NoSuchElementException)
@@ -62,28 +61,27 @@ class CountryServiceSpec extends Specification {
         result[0].name() == "France"
     }
 
-    def "updateCountry updates all fields"() {
+    def "updateCountry updates name, alpha2, alpha3"() {
         given:
-        countryRepository.findById(countryId) >> Optional.of(country)
+        countryRepository.findByCountryCode(countryCode) >> Optional.of(country)
         countryRepository.save(_) >> { Country c -> c }
 
         when:
-        def result = service.updateCountry(countryId, Country.builder().name("Germany").alpha2("DE").alpha3("DEU").countryCode(276).build())
+        def result = service.updateCountry(countryCode, Country.builder().name("Germany").alpha2("DE").alpha3("DEU").countryCode(276).build())
 
         then:
-        result.id() == countryId
+        result.countryCode() == countryCode
         result.name() == "Germany"
         result.alpha2() == "DE"
         result.alpha3() == "DEU"
-        result.countryCode() == 276
     }
 
     def "updateCountry throws when not found"() {
         given:
-        countryRepository.findById(countryId) >> Optional.empty()
+        countryRepository.findByCountryCode(countryCode) >> Optional.empty()
 
         when:
-        service.updateCountry(countryId, Country.builder().build())
+        service.updateCountry(countryCode, Country.builder().build())
 
         then:
         thrown(NoSuchElementException)
@@ -91,21 +89,21 @@ class CountryServiceSpec extends Specification {
 
     def "deleteCountry deletes when found"() {
         given:
-        countryRepository.findById(countryId) >> Optional.of(country)
+        countryRepository.findByCountryCode(countryCode) >> Optional.of(country)
 
         when:
-        service.deleteCountry(countryId)
+        service.deleteCountry(countryCode)
 
         then:
-        1 * countryRepository.delete(countryId)
+        1 * countryRepository.delete(countryCode)
     }
 
     def "deleteCountry throws when not found"() {
         given:
-        countryRepository.findById(countryId) >> Optional.empty()
+        countryRepository.findByCountryCode(countryCode) >> Optional.empty()
 
         when:
-        service.deleteCountry(countryId)
+        service.deleteCountry(countryCode)
 
         then:
         thrown(NoSuchElementException)

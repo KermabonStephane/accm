@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Entity
 @Table(name = "country")
 @Getter
@@ -17,13 +15,11 @@ import java.util.UUID;
 class CountryJpaEntity {
 
     @Id
-    private UUID id;
+    private Integer countryCode;
 
     private String name;
 
     private String alpha2;
 
     private String alpha3;
-
-    private Integer countryCode;
 }

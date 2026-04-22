@@ -13,36 +13,33 @@ class CountryWebMapperSpec extends Specification {
     def "toDto maps all fields"() {
         given:
         def country = Country.builder()
-                .id(UUID.randomUUID())
+                .countryCode(250)
                 .name("France")
                 .alpha2("FR")
                 .alpha3("FRA")
-                .countryCode(250)
                 .build()
 
         when:
         def dto = mapper.toDto(country)
 
         then:
-        dto.id() == country.id()
+        dto.countryCode() == 250
         dto.name() == "France"
         dto.alpha2() == "FR"
         dto.alpha3() == "FRA"
-        dto.countryCode() == 250
     }
 
-    def "toDomain maps fields and ignores id"() {
+    def "toDomain maps all fields"() {
         given:
-        def dto = new CountryDto(UUID.randomUUID(), "Germany", "DE", "DEU", 276)
+        def dto = new CountryDto(276, "Germany", "DE", "DEU")
 
         when:
         def country = mapper.toDomain(dto)
 
         then:
-        country.id() == null
+        country.countryCode() == 276
         country.name() == "Germany"
         country.alpha2() == "DE"
         country.alpha3() == "DEU"
-        country.countryCode() == 276
     }
 }

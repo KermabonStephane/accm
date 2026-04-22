@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,18 +32,18 @@ class CountryController implements CountryApi {
     }
 
     @Override
-    public ResponseEntity<CountryDto> getCountry(UUID id) {
-        return ResponseEntity.ok(countryWebMapper.toDto(getCountryUseCase.getCountryById(id)));
+    public ResponseEntity<CountryDto> getCountry(Integer countryCode) {
+        return ResponseEntity.ok(countryWebMapper.toDto(getCountryUseCase.getCountryByCode(countryCode)));
     }
 
     @Override
-    public ResponseEntity<CountryDto> updateCountry(UUID id, CountryDto request) {
+    public ResponseEntity<CountryDto> updateCountry(Integer countryCode, CountryDto request) {
         return ResponseEntity.ok(countryWebMapper.toDto(
-                updateCountryUseCase.updateCountry(id, countryWebMapper.toDomain(request))));
+                updateCountryUseCase.updateCountry(countryCode, countryWebMapper.toDomain(request))));
     }
 
     @Override
-    public void deleteCountry(UUID id) {
-        deleteCountryUseCase.deleteCountry(id);
+    public void deleteCountry(Integer countryCode) {
+        deleteCountryUseCase.deleteCountry(countryCode);
     }
 }

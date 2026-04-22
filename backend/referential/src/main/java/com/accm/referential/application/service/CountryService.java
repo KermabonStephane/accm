@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -21,14 +20,14 @@ public class CountryService implements CreateCountryUseCase, GetCountryUseCase, 
 
     @Override
     public Country createCountry(Country country) {
-        return countryRepository.save(country.toBuilder().id(UUID.randomUUID()).build());
+        return countryRepository.save(country);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Country getCountryById(UUID id) {
-        return countryRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Country not found: " + id));
+    public Country getCountryByCode(Integer countryCode) {
+        return countryRepository.findByCountryCode(countryCode)
+                .orElseThrow(() -> new NoSuchElementException("Country not found: " + countryCode));
     }
 
     @Override
@@ -38,19 +37,18 @@ public class CountryService implements CreateCountryUseCase, GetCountryUseCase, 
     }
 
     @Override
-    public Country updateCountry(UUID id, Country update) {
-        Country existing = getCountryById(id);
+    public Country updateCountry(Integer countryCode, Country update) {
+        Country existing = getCountryByCode(countryCode);
         return countryRepository.save(existing.toBuilder()
                 .name(update.name())
                 .alpha2(update.alpha2())
                 .alpha3(update.alpha3())
-                .countryCode(update.countryCode())
                 .build());
     }
 
     @Override
-    public void deleteCountry(UUID id) {
-        getCountryById(id);
-        countryRepository.delete(id);
+    public void deleteCountry(Integer countryCode) {
+        getCountryByCode(countryCode);
+        countryRepository.delete(countryCode);
     }
 }

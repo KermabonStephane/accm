@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -18,16 +17,14 @@ class CountryPersistenceAdapter implements CountryRepositoryPort {
 
     @Override
     public Country save(Country country) {
-        CountryJpaEntity entity = country.id() != null
-                ? repository.findById(country.id()).orElseGet(CountryJpaEntity::new)
-                : new CountryJpaEntity();
+        CountryJpaEntity entity = repository.findById(country.countryCode()).orElseGet(CountryJpaEntity::new);
         mapper.updateEntity(entity, country);
         return mapper.toDomain(repository.save(entity));
     }
 
     @Override
-    public Optional<Country> findById(UUID id) {
-        return repository.findById(id).map(mapper::toDomain);
+    public Optional<Country> findByCountryCode(Integer countryCode) {
+        return repository.findById(countryCode).map(mapper::toDomain);
     }
 
     @Override
@@ -36,7 +33,7 @@ class CountryPersistenceAdapter implements CountryRepositoryPort {
     }
 
     @Override
-    public void delete(UUID id) {
-        repository.deleteById(id);
+    public void delete(Integer countryCode) {
+        repository.deleteById(countryCode);
     }
 }

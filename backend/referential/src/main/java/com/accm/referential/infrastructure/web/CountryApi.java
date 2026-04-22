@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Tag(name = "Countries", description = "Country referential API")
 @RequestMapping("/api/v1/countries")
@@ -24,16 +23,16 @@ interface CountryApi {
     @Operation(summary = "List all countries")
     ResponseEntity<List<CountryDto>> listCountries();
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get a country by ID")
-    ResponseEntity<CountryDto> getCountry(@PathVariable UUID id);
+    @GetMapping("/{countryCode}")
+    @Operation(summary = "Get a country by its numeric code")
+    ResponseEntity<CountryDto> getCountry(@PathVariable Integer countryCode);
 
-    @PutMapping("/{id}")
+    @PutMapping("/{countryCode}")
     @Operation(summary = "Update a country")
-    ResponseEntity<CountryDto> updateCountry(@PathVariable UUID id, @RequestBody @Valid CountryDto request);
+    ResponseEntity<CountryDto> updateCountry(@PathVariable Integer countryCode, @RequestBody @Valid CountryDto request);
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{countryCode}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete a country")
-    void deleteCountry(@PathVariable UUID id);
+    void deleteCountry(@PathVariable Integer countryCode);
 }

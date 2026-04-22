@@ -12,43 +12,39 @@ class CountryEntityMapperSpec extends Specification {
     def "toDomain maps all fields"() {
         given:
         def entity = new CountryJpaEntity()
-        entity.id = UUID.randomUUID()
+        entity.countryCode = 250
         entity.name = "France"
         entity.alpha2 = "FR"
         entity.alpha3 = "FRA"
-        entity.countryCode = 250
 
         when:
         def country = mapper.toDomain(entity)
 
         then:
-        country.id() == entity.id
+        country.countryCode() == 250
         country.name() == "France"
         country.alpha2() == "FR"
         country.alpha3() == "FRA"
-        country.countryCode() == 250
     }
 
     def "updateEntity applies all fields"() {
         given:
         def entity = new CountryJpaEntity()
-        entity.id = UUID.randomUUID()
 
         def country = Country.builder()
-                .id(entity.id)
+                .countryCode(276)
                 .name("Germany")
                 .alpha2("DE")
                 .alpha3("DEU")
-                .countryCode(276)
                 .build()
 
         when:
         mapper.updateEntity(entity, country)
 
         then:
+        entity.countryCode == 276
         entity.name == "Germany"
         entity.alpha2 == "DE"
         entity.alpha3 == "DEU"
-        entity.countryCode == 276
     }
 }
