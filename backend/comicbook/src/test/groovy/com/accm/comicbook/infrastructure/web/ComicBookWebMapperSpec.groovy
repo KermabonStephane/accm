@@ -20,7 +20,6 @@ class ComicBookWebMapperSpec extends Specification {
         def comicBook = ComicBook.builder()
                 .id(UUID.randomUUID())
                 .title("Watchmen")
-                .isbn("978-1-4012-0713-1")
                 .date(LocalDate.of(1987, 9, 1))
                 .status(ComicBookStatus.ACTIVE)
                 .build()
@@ -31,7 +30,6 @@ class ComicBookWebMapperSpec extends Specification {
         then:
         dto.id() == comicBook.id
         dto.title() == "Watchmen"
-        dto.isbn() == "978-1-4012-0713-1"
         dto.date() == LocalDate.of(1987, 9, 1)
         dto.status() == ComicBookStatus.ACTIVE
         dto.authors().isEmpty()
@@ -70,7 +68,6 @@ class ComicBookWebMapperSpec extends Specification {
         def dto = new ComicBookDto(
                 UUID.randomUUID(),
                 "Watchmen",
-                "978-1-4012-0713-1",
                 LocalDate.of(1987, 9, 1),
                 ComicBookStatus.DELETED,
                 null,
@@ -86,7 +83,6 @@ class ComicBookWebMapperSpec extends Specification {
         then:
         comicBook.id == null
         comicBook.title == "Watchmen"
-        comicBook.isbn == "978-1-4012-0713-1"
         comicBook.date == LocalDate.of(1987, 9, 1)
         comicBook.status == null
         comicBook.authors.isEmpty()
@@ -95,7 +91,7 @@ class ComicBookWebMapperSpec extends Specification {
     def "toDomain(ComicBookDto) maps authors list including middlename → middleName"() {
         given:
         def authorDto = new ComicBookDto.AuthorDto(null, "Alan", "Moore", "Oswald", AuthorRole.WRITER)
-        def dto = new ComicBookDto(null, "Watchmen", null, null, null, null, null, null, null, [authorDto])
+        def dto = new ComicBookDto(null, "Watchmen", null, null, null, null, null, null, [authorDto])
 
         when:
         def comicBook = mapper.toDomain(dto)

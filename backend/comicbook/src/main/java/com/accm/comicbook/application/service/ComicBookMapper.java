@@ -21,7 +21,6 @@ interface ComicBookMapper {
     @Mapping(target = "status", source = "existing.status")
     @Mapping(target = "authors", source = "existing.authors")
     @Mapping(target = "title", source = "update.title")
-    @Mapping(target = "isbn", source = "update.isbn")
     @Mapping(target = "date", source = "update.date")
     @Mapping(target = "seriesId", source = "update.seriesId")
     @Mapping(target = "issueNumber", source = "update.issueNumber")

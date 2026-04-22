@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Builder(toBuilder = true)
-public record ComicBook(UUID id, String title, String isbn, LocalDate date, ComicBookStatus status,
+public record ComicBook(UUID id, String title, LocalDate date, ComicBookStatus status,
                         UUID seriesId, Integer issueNumber, Integer volumeNumber, UUID editorId, List<ComicBookAuthor> authors) {
 
     public ComicBook {
