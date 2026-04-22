@@ -129,5 +129,6 @@
     <modules>
         <module>comicbook</module>
         <module>people</module>
+        <module>referential</module>
     </modules>
 </project>
