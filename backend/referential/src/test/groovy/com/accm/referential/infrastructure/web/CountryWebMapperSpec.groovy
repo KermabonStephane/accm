@@ -17,6 +17,8 @@ class CountryWebMapperSpec extends Specification {
                 .name("France")
                 .alpha2("FR")
                 .alpha3("FRA")
+                .regionCode(150)
+                .subRegionCode(155)
                 .build()
 
         when:
@@ -27,11 +29,13 @@ class CountryWebMapperSpec extends Specification {
         dto.name() == "France"
         dto.alpha2() == "FR"
         dto.alpha3() == "FRA"
+        dto.regionCode() == 150
+        dto.subRegionCode() == 155
     }
 
     def "toDomain maps all fields"() {
         given:
-        def dto = new CountryDto(276, "Germany", "DE", "DEU")
+        def dto = new CountryDto(276, "Germany", "DE", "DEU", 150, 155)
 
         when:
         def country = mapper.toDomain(dto)
@@ -41,5 +45,7 @@ class CountryWebMapperSpec extends Specification {
         country.name() == "Germany"
         country.alpha2() == "DE"
         country.alpha3() == "DEU"
+        country.regionCode() == 150
+        country.subRegionCode() == 155
     }
 }

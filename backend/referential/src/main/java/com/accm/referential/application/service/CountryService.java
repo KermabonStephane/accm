@@ -43,6 +43,8 @@ public class CountryService implements CreateCountryUseCase, GetCountryUseCase, 
                 .name(update.name())
                 .alpha2(update.alpha2())
                 .alpha3(update.alpha3())
+                .regionCode(update.regionCode())
+                .subRegionCode(update.subRegionCode())
                 .build());
     }
 

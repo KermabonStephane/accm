@@ -6,26 +6,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "country")
+@Table(name = "sub_region")
 @Getter
 @Setter
 @NoArgsConstructor
-class CountryJpaEntity {
+class SubRegionJpaEntity {
 
     @Id
-    private Integer countryCode;
+    private Integer code;
 
     private String name;
 
-    private String alpha2;
-
-    private String alpha3;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_code")
+    @JoinColumn(name = "region_code", nullable = false)
     private RegionJpaEntity region;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sub_region_code")
-    private SubRegionJpaEntity subRegion;
 }

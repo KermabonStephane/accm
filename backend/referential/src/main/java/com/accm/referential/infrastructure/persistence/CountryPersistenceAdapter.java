@@ -13,12 +13,16 @@ import java.util.Optional;
 class CountryPersistenceAdapter implements CountryRepositoryPort {
 
     private final CountryJpaRepository repository;
+    private final RegionJpaRepository regionRepository;
+    private final SubRegionJpaRepository subRegionRepository;
     private final CountryEntityMapper mapper;
 
     @Override
     public Country save(Country country) {
         CountryJpaEntity entity = repository.findById(country.countryCode()).orElseGet(CountryJpaEntity::new);
         mapper.updateEntity(entity, country);
+        entity.setRegion(country.regionCode() != null ? regionRepository.getReferenceById(country.regionCode()) : null);
+        entity.setSubRegion(country.subRegionCode() != null ? subRegionRepository.getReferenceById(country.subRegionCode()) : null);
         return mapper.toDomain(repository.save(entity));
     }
 
