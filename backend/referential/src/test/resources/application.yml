@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS referential
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -9,5 +9,8 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: false
+    properties:
+      hibernate:
+        default_schema: referential
   flyway:
     enabled: false

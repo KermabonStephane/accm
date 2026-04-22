@@ -10,8 +10,13 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
+    properties:
+      hibernate:
+        default_schema: comicbook
   flyway:
     enabled: true
+    schemas: comicbook
+    default-schema: comicbook
   threads:
     virtual:
       enabled: true

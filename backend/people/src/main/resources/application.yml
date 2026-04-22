@@ -10,8 +10,13 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
+    properties:
+      hibernate:
+        default_schema: people
   flyway:
     enabled: true
+    schemas: people
+    default-schema: people
   threads:
     virtual:
       enabled: true

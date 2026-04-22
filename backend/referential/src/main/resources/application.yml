@@ -2,7 +2,7 @@ spring:
   application:
     name: accm-referential
   datasource:
-    url: jdbc:postgresql://localhost:5432/accm_referential
+    url: jdbc:postgresql://localhost:5432/accm
     username: accm
     password: accm
   jpa:
@@ -10,14 +10,19 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
+    properties:
+      hibernate:
+        default_schema: referential
   flyway:
     enabled: true
+    schemas: referential
+    default-schema: referential
   threads:
     virtual:
       enabled: true
 
 server:
-  port: 8081
+  port: 8082
 
 springdoc:
   api-docs:
