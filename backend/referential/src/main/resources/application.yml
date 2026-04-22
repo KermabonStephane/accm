@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: accm-referential
+  datasource:
+    url: jdbc:postgresql://localhost:5432/accm_referential
+    username: accm
+    password: accm
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  flyway:
+    enabled: true
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: 8081
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
